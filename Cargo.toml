@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "libsmashbing",
+    "smashbing-native"
+    # TODO: Smashbing Web
+]
