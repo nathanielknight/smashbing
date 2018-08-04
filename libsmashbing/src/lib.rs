@@ -1,4 +1,5 @@
 mod draw;
+mod paddle;
 mod rect;
 mod vec;
 
