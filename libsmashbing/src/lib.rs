@@ -1,3 +1,4 @@
+mod draw;
 mod rect;
 mod vec;
 
@@ -33,12 +34,6 @@ impl DynamicObject for PointInMotion {
 pub struct Game {
     ball: PointInMotion,
 }
-
-/// RGBA Color
-pub type Color = (f32, f32, f32, f32);
-
-/// Field to draw pixels on
-pub type Screen = [[Color; 64]; 64];
 
 /// User input (read by implementations)
 pub enum Command {
