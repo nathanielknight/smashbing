@@ -65,6 +65,15 @@ fn test_vec_rotate() {
     );
 }
 
+#[test]
+fn test_vec_scaled() {
+    #[allow(unused_mut)]
+    let mut orig = Vec2::new(1.0, 1.0);
+    let scaled = orig.scaled(2.0);
+    assert_eq!(orig, Vec2::new(1.0, 1.0));
+    assert_eq!(scaled, Vec2::new(2.0, 2.0));
+}
+
 impl ops::Add for Vec2 {
     type Output = Vec2;
 
