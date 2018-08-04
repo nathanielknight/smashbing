@@ -3,10 +3,10 @@ use vec::Vec2;
 
 #[derive(PartialEq, Debug)]
 pub struct Rect {
-    left: f32,
-    right: f32,
-    top: f32,
-    bottom: f32,
+    pub left: f32,
+    pub right: f32,
+    pub top: f32,
+    pub bottom: f32,
 }
 
 impl Rect {
