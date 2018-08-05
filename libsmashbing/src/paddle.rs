@@ -41,21 +41,22 @@ impl Paddle {
             self.rect.translate(dx, 0.0);
         }
         if self.rect.right > MAX_X {
-            let dx = self.rect.right - MAX_X;
+            let dx = MAX_X - self.rect.right;
             self.rect.translate(dx, 0.0);
         }
     }
 
     pub fn move_towards(&mut self, x: &f32) {
-        let mut dx: f32 = if *x > self.rect.right {
-            x - self.rect.right
-        } else {
-            self.rect.left - x
-        };
-        if dx > MOVE_THRESHOLD {
-            dx *= MOVE_SCALE;
-        }
-        self.rect.translate(dx, 0.0);
+        // TODO(nknight): This
         self.stay_in_bounds();
     }
+}
+
+#[test]
+fn test_paddle_move_towards() {
+    // Test moving a short distance
+    let mut p = Paddle::default();
+    let x1 = p.rect.left - 1.0;
+    p.move_towards(&x1);
+    assert_eq!(p.rect.left, x1);
 }
