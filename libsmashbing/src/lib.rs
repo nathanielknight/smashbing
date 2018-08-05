@@ -1,3 +1,4 @@
+mod ball;
 mod draw;
 mod paddle;
 mod rect;
@@ -11,44 +12,38 @@ trait DynamicObject {
 }
 
 /// Point with velocity
-#[derive(Debug, PartialEq, Clone, Copy)]
-struct PointInMotion {
-    pos: vec::Vec2,
-    vel: vec::Vec2,
-}
-
-impl PointInMotion {
-    fn new(x: f32, y: f32, dx: f32, dy: f32) -> PointInMotion {
-        PointInMotion {
-            pos: vec::Vec2::new(x, y),
-            vel: vec::Vec2::new(dx, dy),
-        }
-    }
-}
-
-impl DynamicObject for PointInMotion {
-    fn dyn_update(&mut self, dt: f32) {
-        self.pos += self.vel.scaled(dt);
-    }
-}
 
 pub struct Game {
-    ball: PointInMotion,
+    ball: ball::Ball,
+    paddle: paddle::Paddle,
 }
 
 /// User input (read by implementations)
 pub enum Command {
-    Left(f32),
+    MoveTowards(f32),
     None,
-    Right(f32),
     Fire(f32, f32),
 }
 
 impl Game {
     pub fn update(&mut self, dt: f32, commands: &[Command]) {
         // Dynamics
-        self.ball.dyn_update(dt);
-        // User Input
+        self.ball.update(dt);
+        // Handle User Input
+        for cmd in commands {
+            match cmd {
+                &Command::None => (),
+                &Command::MoveTowards(x_pos) => self.paddle.move_towards(&x_pos),
+                &Command::Fire(_, _) => unimplemented!(),
+            }
+        }
         // Collisions
+        // Particles
+    }
+
+    pub fn screen(&self) -> draw::Screen {
+        let mut scrn = draw::blank_screen();
+        self.ball.draw_into(&mut scrn);
+        scrn
     }
 }
