@@ -67,3 +67,40 @@ fn test_translated() {
     assert_eq!(translated, Rect::new(2.0, 3.0, 2.0, 3.0));
     assert_eq!(orig, Rect::new(1.0, 2.0, 1.0, 2.0));
 }
+
+impl Rect {
+    fn distance_to(&self, p: &Vec2) -> Vec2 {
+        let dx = if p.x < self.left {
+            p.x - self.left
+        } else if p.x > self.right {
+            p.x - self.right
+        } else {
+            0.0
+        };
+        let dy = if p.y > self.top {
+            p.y - self.top
+        } else if p.y < self.bottom {
+            p.y - self.bottom
+        } else {
+            0.0
+        };
+        Vec2::new(dx, dy)
+    }
+}
+
+#[test]
+fn test_rect_distance_to() {
+    let r = Rect::new(1.0, 2.0, 1.0, 2.0);
+    // let sqrt2 = (2.0 as f32).sqrt();
+    let cases = vec![
+        (Vec2::new(1.5, 1.5), Vec2::new(0.0, 0.0)),
+        (Vec2::new(1.5, 3.0), Vec2::new(0.0, 1.0)),
+        (Vec2::new(3.0, 1.5), Vec2::new(1.0, 0.0)),
+        (Vec2::new(3.0, 3.0), Vec2::new(1.0, 1.0)),
+        (Vec2::new(0.0, 0.0), Vec2::new(-1.0, -1.0)),
+        (Vec2::new(1.5, 0.0), Vec2::new(0.0, -1.0)),
+    ];
+    for (pt, dist) in cases {
+        assert_eq!(r.distance_to(&pt), dist);
+    }
+}
