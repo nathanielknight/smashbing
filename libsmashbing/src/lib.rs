@@ -1,8 +1,8 @@
-mod ball;
-mod draw;
+pub mod ball;
+pub mod draw;
 mod paddle;
-mod rect;
-mod vec;
+pub mod rect;
+pub mod vec;
 
 /// Any object that should move during the dynamics step based **only** on
 /// its internal state (e.g. ball, particles).
@@ -14,8 +14,18 @@ trait DynamicObject {
 /// Point with velocity
 
 pub struct Game {
-    ball: ball::Ball,
-    paddle: paddle::Paddle,
+    pub ball: ball::Ball,
+    pub paddle: paddle::Paddle,
+}
+
+impl Default for Game {
+    fn default() -> Game {
+        let paddle = paddle::Paddle::default();
+        Game {
+            ball: ball::Ball::new(10.0, 10.0, 300.0, 300.0),
+            paddle: paddle,
+        }
+    }
 }
 
 /// User input (read by implementations)
@@ -39,11 +49,5 @@ impl Game {
         }
         // Collisions
         // Particles
-    }
-
-    pub fn screen(&self) -> draw::Screen {
-        let mut scrn = draw::blank_screen();
-        self.ball.draw_into(&mut scrn);
-        scrn
     }
 }
