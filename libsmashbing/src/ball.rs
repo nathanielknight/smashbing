@@ -1,0 +1,59 @@
+use draw;
+use vec::Vec2;
+
+const MIN_X: f32 = 3.0;
+const MAX_X: f32 = 60.999;
+const MIN_Y: f32 = 7.0;
+const MAX_Y: f32 = 60.999;
+
+/// Ball doesn't bounce if it hits the ground with less than this velocity.
+const BOUNCE_THRESHOLD: f32 = 3.0;
+/// Y-Velocity is scaled by this much with each bounce.
+const BOUNCE_FACTOR: f32 = 0.4;
+
+/// Amount the ball's y velocity decreases each second.
+const GRAVITATIONAL_ACCELERATION: f32 = 1.0;
+const BALL_COLOR: draw::Color = (1.0, 0.0, 0.0, 1.0);
+
+/// The player's ball
+#[derive(Debug)]
+pub struct Ball {
+    pos: Vec2,
+    vel: Vec2,
+}
+
+impl Ball {
+    pub fn update(&mut self, dt: f32) {
+        self.pos += self.vel.scaled(dt);
+        self.vel.y += GRAVITATIONAL_ACCELERATION * dt;
+        // Collide elastically off side and top walls
+        if self.pos.x < MIN_X {
+            self.pos.x = MIN_X;
+            self.vel.x *= -1.0;
+        }
+        if self.pos.x > MAX_X {
+            self.pos.x = MAX_X;
+            self.vel.x *= -1.0;
+        }
+        if self.pos.y > MAX_Y {
+            self.pos.y = MAX_Y;
+            self.vel.y *= -1.0;
+        }
+        // Collide inelasticall with the ground
+        if self.pos.y < MIN_Y {
+            if self.vel.magnitude() < BOUNCE_THRESHOLD {
+                self.pos.y = MIN_Y;
+                self.vel = Vec2::new(0.0, 0.0);
+            } else {
+                self.pos.y = MIN_Y;
+                self.vel.y *= -BOUNCE_THRESHOLD;
+            }
+        }
+    }
+
+    pub fn draw_into(&self, scrn: &mut draw::Screen) {
+        let pict_x = self.pos.x as usize;
+        let pict_y = self.pos.y as usize;
+        scrn[pict_x][pict_y] = BALL_COLOR;
+    }
+}
