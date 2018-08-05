@@ -40,6 +40,11 @@ impl Rect {
             self.top + dy,
         )
     }
+    pub fn center(&self) -> Vec2 {
+        Vec2::new(
+            (self.right + self.left) / 2.0,
+            (self.bottom + self.top) / 2.0,
+        )
 }
 
 #[test]
@@ -66,6 +71,12 @@ fn test_translated() {
     let translated = orig.translated(1.0, 1.0);
     assert_eq!(translated, Rect::new(2.0, 3.0, 2.0, 3.0));
     assert_eq!(orig, Rect::new(1.0, 2.0, 1.0, 2.0));
+}
+
+#[test]
+fn test_center_x() {
+    let r1 = Rect::new(0.0, 2.0, 0.0, 2.0);
+    assert_eq!(r1.center(), Vec2::new(1.0, 1.0));
 }
 
 impl Rect {
