@@ -1,0 +1,8 @@
+[package]
+name = "smashbing-native"
+version = "0.1.0"
+authors = ["Nat Knight <nathaniel.ep@gmail.com>"]
+
+[dependencies]
+ggez = "*"
+libsmashbing = {path = "../libsmashbing"}
