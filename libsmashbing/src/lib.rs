@@ -1,6 +1,9 @@
+use std::collections;
+
 pub mod ball;
+pub mod block;
 pub mod draw;
-mod rect;
+pub mod rect;
 pub mod vec;
 
 /// Any object that should move during the dynamics step based **only** on
@@ -12,12 +15,14 @@ trait DynamicObject {
 
 pub struct Game {
     pub ball: ball::Ball,
+    pub blocks: collections::HashSet<block::Block>,
 }
 
 impl Default for Game {
     fn default() -> Game {
         Game {
             ball: ball::Ball::new(10.0, 10.0, 300.0, 300.0),
+            blocks: block::new_blockset(),
         }
     }
 }
@@ -27,6 +32,7 @@ impl Default for Game {
 pub enum Command {
     None,
     Fire(f32, f32),
+    // TODO: Implement a Reset command.
 }
 
 impl Game {

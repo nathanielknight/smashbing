@@ -51,6 +51,15 @@ struct NativeGame {
     coords: CoordConverter,
 }
 
+fn convert_rect(inp: &libsmashbing::rect::Rect) -> graphics::Rect {
+    graphics::Rect::new(
+        inp.left,
+        64.0 - inp.top,
+        inp.right - inp.left,
+        inp.top - inp.bottom,
+    )
+}
+
 impl event::EventHandler for NativeGame {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         const TARGET_FPS: u32 = 60;
@@ -66,6 +75,7 @@ impl event::EventHandler for NativeGame {
         while timer::check_update_time(ctx, TARGET_FPS) {
             let delta = timer::get_delta(ctx);
             let dt = timer::duration_to_f64(delta);
+            // TODO: Handle effects from update (e.g. sounds).
             self.game.update(dt as f32, &cmds);
         }
         Ok(())
@@ -79,6 +89,13 @@ impl event::EventHandler for NativeGame {
         let ball_rect =
             graphics::Rect::new(self.game.ball.pos.x, 64.0 - self.game.ball.pos.y, 1.0, 1.0);
         graphics::rectangle(ctx, graphics::DrawMode::Fill, ball_rect)?;
+
+        // Blocks
+        for block in &self.game.blocks {
+            graphics::set_color(ctx, convert_color(&block.color))?;
+            let block_rect = convert_rect(&block.rect);
+            graphics::rectangle(ctx, graphics::DrawMode::Fill, block_rect)?;
+        }
 
         graphics::present(ctx);
         timer::yield_now();
