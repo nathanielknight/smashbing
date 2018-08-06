@@ -31,15 +31,15 @@ The game client is responsible for:
 
 [cargo-wsp]: https://doc.rust-lang.org/book/second-edition/ch14-03-cargo-workspaces.html
 
-I want to have sub-pixel physics,✓
-with gravity and collisions.✓
-I want destroying blocks✓
+I want to have sub-pixel physics,✔
+with gravity and collisions.✔
+I want destroying blocks✔
 to randomly perturb the ball's path
-to emulate chaotic collisions.
+to emulate chaotic collisions.✔
 
 I want chunky low-rez sounds.
 
-I want to do touch/mouse only controls✓
+I want to do touch/mouse only controls✔
 to make mobile-web clients easier.
 
 I'll record my build process with [Just](https://github.com/casey/just).
