@@ -49,6 +49,7 @@ fn test_vec_magnitude() {
 
 #[test]
 fn test_vec_rotate() {
+    const PI: f32 = 3.1415926535;
     let mut v = Vec2::new(1.0, 0.0);
     v.rotate(PI / 2.0);
     assert!((v - Vec2::new(0.0, 1.0)).magnitude() < 1e-7);
@@ -141,12 +142,13 @@ impl Vec2 {
 
 #[test]
 fn test_normalizing() {
+    const THRESHOLD: f32 = 1e-7;
     let mut v1 = Vec2::new(1.0, 2.0);
     v1.normalise();
-    assert_eq!(v1.magnitude(), 1.0);
+    assert!((v1.magnitude() - 1.0).abs() < THRESHOLD);
     #[allow(unused_mut)]
     let v2 = Vec2::new(2.0, 1.0);
     let v3 = v2.normalised();
     assert_eq!(v2, Vec2::new(2.0, 1.0));
-    assert_eq!(v3.magnitude(), 1.0);
+    assert!((v3.magnitude() - 1.0).abs() < THRESHOLD);
 }
