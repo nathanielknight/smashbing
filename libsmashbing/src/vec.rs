@@ -1,5 +1,4 @@
 /// Points and directions in space.
-use std::f32::consts::PI;
 use std::ops;
 
 /// Point in 2D Space (modelled as a continuous field)
@@ -125,4 +124,29 @@ fn test_vec_scale() {
     assert_eq!(v, Vec2::new(2.0, 4.0));
     v.scale(-3.0);
     assert_eq!(v, Vec2::new(-6.0, -12.0));
+}
+
+impl Vec2 {
+    pub fn normalise(&mut self) {
+        let m = self.magnitude();
+        self.x /= m;
+        self.y /= m;
+    }
+
+    pub fn normalised(&self) -> Vec2 {
+        let m = self.magnitude();
+        Vec2::new(self.x / m, self.y / m)
+    }
+}
+
+#[test]
+fn test_normalizing() {
+    let mut v1 = Vec2::new(1.0, 2.0);
+    v1.normalise();
+    assert_eq!(v1.magnitude(), 1.0);
+    #[allow(unused_mut)]
+    let v2 = Vec2::new(2.0, 1.0);
+    let v3 = v2.normalised();
+    assert_eq!(v2, Vec2::new(2.0, 1.0));
+    assert_eq!(v3.magnitude(), 1.0);
 }
