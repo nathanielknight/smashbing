@@ -7,17 +7,20 @@ const MAX_Y: f32 = 60.999;
 
 /// Ball doesn't bounce if it hits the ground with less than this velocity.
 const BOUNCE_THRESHOLD: f32 = 3.0;
+
 /// Y-Velocity is scaled by this much with each bounce.
 const BOUNCE_FACTOR: f32 = 0.4;
 
 /// Magnitude of velocity to add when firing
-const FIRE_IMPULSE: f32 = 80.0;
+const FIRE_IMPULSE: f32 = 70.0;
 
 /// Velocity is scaled by this much when colliding with a block
-const BLOCK_DAMPING: f32 = 0.4;
+const BLOCK_DAMPING: f32 = 0.3;
 
 /// Amount the ball's y velocity decreases each second.
-const GRAVITATIONAL_ACCELERATION: f32 = -40.0;
+const GRAVITATIONAL_ACCELERATION: f32 = -60.0;
+
+// TODO Add impulse charges that reset on the ground?
 
 /// The player's ball
 #[derive(Debug)]
