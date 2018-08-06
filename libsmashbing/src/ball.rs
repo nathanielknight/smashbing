@@ -1,4 +1,3 @@
-use draw;
 use vec::Vec2;
 
 const MIN_X: f32 = 3.0;
@@ -11,8 +10,11 @@ const BOUNCE_THRESHOLD: f32 = 3.0;
 /// Y-Velocity is scaled by this much with each bounce.
 const BOUNCE_FACTOR: f32 = 0.4;
 
+/// Magnitude of velocity to add when firing
+const FIRE_IMPULSE: f32 = 80.0;
+
 /// Amount the ball's y velocity decreases each second.
-const GRAVITATIONAL_ACCELERATION: f32 = -9.0;
+const GRAVITATIONAL_ACCELERATION: f32 = -40.0;
 
 /// The player's ball
 #[derive(Debug)]
@@ -56,5 +58,12 @@ impl Ball {
                 self.vel.x *= BOUNCE_FACTOR;
             }
         }
+    }
+
+    pub fn fire_at(&mut self, x: f32, y: f32) {
+        let mut dv = Vec2::new(x - self.pos.x, y - self.pos.y);
+        dv.normalise();
+        dv.scale(FIRE_IMPULSE);
+        self.vel += dv;
     }
 }
