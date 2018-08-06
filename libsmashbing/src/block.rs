@@ -45,6 +45,7 @@ impl hash::Hash for Block {
 }
 
 pub fn new_blockset() -> collections::HashSet<Block> {
+    // TODO: Colors (gradient? Random? Random Gradient?)
     const BLOCKS_START_X: f32 = 8.0;
     const BLOCKS_START_Y: f32 = 16.0;
     let mut blocks = collections::HashSet::new();
