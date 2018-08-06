@@ -23,26 +23,23 @@ The game library is responsible for:
 - defining game state and moves (including animation states)
 - updating the game state in response to moves
 
-
 The game client is responsible for:
 
 - drawing the game state
 - the game loop clock (because I can't rely on the hardware clock in the WASM library)
-- getting user input
+- handling effects (e.g. user input✓, sounds)
 
 [cargo-wsp]: https://doc.rust-lang.org/book/second-edition/ch14-03-cargo-workspaces.html
 
-
-I want to have sub-pixel physics, 
-with gravity and collisions.
-I want destroying blocks
+I want to have sub-pixel physics,✓
+with gravity and collisions.✓
+I want destroying blocks✓
 to randomly perturb the ball's path
 to emulate chaotic collisions.
 
 I want chunky low-rez sounds.
 
-I want to do touch/mouse only controls
-to make mobile clients easier.
+I want to do touch/mouse only controls✓
+to make mobile-web clients easier.
 
 I'll record my build process with [Just](https://github.com/casey/just).
-
