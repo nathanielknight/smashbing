@@ -13,6 +13,9 @@ const BOUNCE_FACTOR: f32 = 0.4;
 /// Magnitude of velocity to add when firing
 const FIRE_IMPULSE: f32 = 80.0;
 
+/// Velocity is scaled by this much when colliding with a block
+const BLOCK_DAMPING: f32 = 0.4;
+
 /// Amount the ball's y velocity decreases each second.
 const GRAVITATIONAL_ACCELERATION: f32 = -40.0;
 
@@ -58,6 +61,11 @@ impl Ball {
                 self.vel.x *= BOUNCE_FACTOR;
             }
         }
+    }
+
+    pub fn block_collide(&mut self) {
+        self.vel.scale(BLOCK_DAMPING);
+        // TODO Random rotation?
     }
 
     pub fn fire_at(&mut self, x: f32, y: f32) {

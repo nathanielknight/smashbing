@@ -37,8 +37,6 @@ pub enum Command {
 
 impl Game {
     pub fn update(&mut self, dt: f32, commands: &[Command]) {
-        // Dynamics
-        self.ball.update(dt);
         // Handle User Input
         for cmd in commands {
             match cmd {
@@ -47,6 +45,20 @@ impl Game {
             }
         }
         // Collisions
-        // Particles
+        let mut colliding = false;
+        for block in &self.blocks {
+            if block.rect.contains(&self.ball.pos) {
+                colliding = true;
+            }
+        }
+        if colliding {
+            self.ball.block_collide();
+            let ball_pos = self.ball.pos;
+            self.blocks.retain(|b| !b.rect.contains(&ball_pos));
+        }
+
+        // Dynamics
+        self.ball.update(dt);
+        // Particles (todo)
     }
 }
