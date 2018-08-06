@@ -67,7 +67,6 @@ impl event::EventHandler for NativeGame {
             self.fire = false; // Reset listener.
             let pos = mouse::get_position(ctx).expect("Error getting mouse position");
             let (x, y) = self.coords.convert_from_pixels(pos.x, pos.y);
-            println!("firing at x: {}, y: {}", x, y);
             vec![libsmashbing::Command::Fire(x, y)]
         } else {
             Vec::new()
