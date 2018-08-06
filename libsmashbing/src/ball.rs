@@ -1,4 +1,9 @@
+extern crate rand;
+use rand::{thread_rng, Rng};
+
 use vec::Vec2;
+
+const PI: f32 = 3.1415927535;
 
 const MIN_X: f32 = 3.0;
 const MAX_X: f32 = 60.999;
@@ -27,13 +32,17 @@ const GRAVITATIONAL_ACCELERATION: f32 = -60.0;
 pub struct Ball {
     pub pos: Vec2,
     pub vel: Vec2,
+    dist: rand::distributions::Uniform<f32>,
 }
 
 impl Ball {
     pub fn new(x: f32, y: f32, dx: f32, dy: f32) -> Ball {
+        let mut rng = rand::thread_rng();
+        let mut dist = rand::distributions::Uniform::new(-PI / 6.0, PI / 6.0);
         Ball {
             pos: Vec2::new(x, y),
             vel: Vec2::new(dx, dy),
+            dist: dist,
         }
     }
 
@@ -68,7 +77,9 @@ impl Ball {
 
     pub fn block_collide(&mut self) {
         self.vel.scale(BLOCK_DAMPING);
-        // TODO Random rotation?
+        let mut rng = thread_rng();
+        let rot = rng.sample(self.dist);
+        self.vel.rotate(rot);
     }
 
     pub fn fire_at(&mut self, x: f32, y: f32) {

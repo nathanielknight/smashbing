@@ -1,3 +1,5 @@
+extern crate rand;
+
 use std::collections;
 
 pub mod ball;
