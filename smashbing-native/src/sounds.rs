@@ -2,9 +2,6 @@ use ggez;
 use ggez::audio::{SoundData, Source};
 use libsmashbing::SoundId;
 
-const BOUNCE: &'static [u8] = include_bytes!("../../sounds/bounce.wav");
-const BOUNCE_CHARGE: &'static [u8] = include_bytes!("../../sounds/bounce-charge.wav");
-
 pub struct SoundRepo {
     bounce: Source,
     bounce_charge: Source,
@@ -12,13 +9,17 @@ pub struct SoundRepo {
 
 impl SoundRepo {
     pub fn new(ctx: &mut ggez::Context) -> ggez::GameResult<SoundRepo> {
-        let bounce_data = SoundData::from_bytes(BOUNCE);
-        let bounce_source = Source::from_data(ctx, bounce_data)?;
-        let bounce_charge_data = SoundData::from_bytes(BOUNCE_CHARGE);
-        let bounce_charge_source = Source::from_data(ctx, bounce_charge_data)?;
+        macro_rules! load_sound_file {
+            ($fname:tt) => {{
+                const BYTES: &'static [u8] = include_bytes!($fname);
+                let sound_data = SoundData::from_bytes(BYTES);
+                Source::from_data(ctx, sound_data)?
+            }};
+        }
+
         Ok(SoundRepo {
-            bounce: bounce_source,
-            bounce_charge: bounce_charge_source,
+            bounce: load_sound_file!("../../sounds/bounce.wav"),
+            bounce_charge: load_sound_file!("../../sounds/bounce-charge.wav"),
         })
     }
 
