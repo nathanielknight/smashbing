@@ -56,7 +56,10 @@ impl Game {
         for cmd in commands {
             match cmd {
                 &Command::None => (),
-                &Command::Fire(x, y) => self.ball.fire_at(x, y),
+                &Command::Fire(x, y) => {
+                    let fire_effects = self.ball.fire_at(x, y);
+                    effects.extend(fire_effects);
+                }
             }
         }
         // Collisions

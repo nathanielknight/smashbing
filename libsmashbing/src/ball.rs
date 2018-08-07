@@ -119,14 +119,19 @@ impl Ball {
         effects
     }
 
-    pub fn fire_at(&mut self, x: f32, y: f32) {
+    pub fn fire_at(&mut self, x: f32, y: f32) -> Vec<::Effect> {
         if self.charges < 1 {
-            return;
+            return vec![];
         }
         self.charges -= 1;
         let mut dv = Vec2::new(x - self.pos.x, y - self.pos.y);
         dv.normalise();
         dv.scale(FIRE_IMPULSE);
         self.vel += dv;
+        match self.charges {
+            0 => vec![::Effect::Sound(::SoundId::ImpulseExhaust)],
+            1 => vec![::Effect::Sound(::SoundId::Impulse)],
+            _ => vec![],
+        }
     }
 }
