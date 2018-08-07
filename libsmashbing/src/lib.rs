@@ -37,7 +37,7 @@ pub enum Command {
     // TODO: Implement a Reset command.
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum SoundId {
     Bounce,
     BounceCharge,
@@ -73,7 +73,8 @@ impl Game {
             }
         }
         if colliding {
-            self.ball.block_collide();
+            let collision_effects = self.ball.block_collide();
+            effects.extend(collision_effects);
             let ball_pos = self.ball.pos;
             self.blocks.retain(|b| !b.rect.contains(&ball_pos));
         }

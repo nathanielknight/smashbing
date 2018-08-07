@@ -26,6 +26,18 @@ const GRAVITATIONAL_ACCELERATION: f32 = -60.0;
 /// Ball doesn't accelerate if less than this far from MIN_Y.
 const NORMAL_THRESHOLD: f32 = 0.2;
 
+fn random_crash_sound() -> ::SoundId {
+    const CRASH_SOUNDS: [::SoundId; 4] = [
+        ::SoundId::Break1,
+        ::SoundId::Break2,
+        ::SoundId::Break3,
+        ::SoundId::Break4,
+    ];
+    let rng = &mut rand::thread_rng();
+    let sample = rand::seq::sample_iter(rng, CRASH_SOUNDS.iter(), 1).unwrap();
+    sample[0].clone()
+}
+
 /// The player's ball
 #[derive(Debug)]
 pub struct Ball {
@@ -95,11 +107,16 @@ impl Ball {
         effects
     }
 
-    pub fn block_collide(&mut self) {
+    pub fn block_collide(&mut self) -> Vec<::Effect> {
+        let mut effects = Vec::new();
+        // Physics
         self.vel.scale(BLOCK_DAMPING);
         let mut rng = thread_rng();
         let rot = rng.sample(self.dist);
         self.vel.rotate(rot);
+        // Crash sound
+        effects.push(::Effect::Sound(random_crash_sound()));
+        effects
     }
 
     pub fn fire_at(&mut self, x: f32, y: f32) {
