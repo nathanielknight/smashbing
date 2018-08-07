@@ -13,7 +13,7 @@ const MAX_Y: f32 = 60.999;
 /// Ball doesn't bounce if it hits the ground with less than this velocity.
 const BOUNCE_THRESHOLD: f32 = 3.0;
 /// Y-Velocity is scaled by this much with each bounce.
-const BOUNCE_FACTOR: f32 = 0.6;
+const BOUNCE_FACTOR: f32 = 0.55;
 
 /// Magnitude of velocity to add when firing
 const FIRE_IMPULSE: f32 = 70.0;
@@ -50,8 +50,7 @@ impl Ball {
         let mut effects = Vec::new();
         self.pos += self.vel.scaled(dt);
         if self.pos.y > MIN_Y + NORMAL_THRESHOLD {
-            // Stop falling if "resting" on the ground.
-            println!("gravitying at {}", self.pos.y);
+            // Don't fall if "resting" on the ground.
             self.vel.y += GRAVITATIONAL_ACCELERATION * dt;
         }
         // Collide elastically off side and top walls
@@ -77,7 +76,6 @@ impl Ball {
         // Collide inelasticall with the ground
         if self.pos.y < MIN_Y {
             if self.vel.magnitude() > 0.7 {
-                println!("ball.vel.magnitude(): {}", self.vel.magnitude());
                 effects.push(::Effect::Sound(::SoundId::Bounce));
             }
             if self.vel.magnitude() < BOUNCE_THRESHOLD {
