@@ -13,9 +13,8 @@ use libsmashbing::{Effect, Game, SoundId};
 
 mod sounds;
 
-// TODO: Pixelating Shader
 fn setup_graphics(ctx: &mut Context) -> GameResult<()> {
-    graphics::set_fullscreen(ctx, false)?;
+    graphics::set_resolution(ctx, 64, 64)?;
     graphics::set_screen_coordinates(ctx, graphics::Rect::new(0.0, 0.0, 64.0, 64.0))?;
     graphics::set_background_color(ctx, graphics::BLACK);
     Ok(())
@@ -86,8 +85,12 @@ impl event::EventHandler for NativeGame {
 
         // Ball
         graphics::set_color(ctx, convert_color(&draw::BALL_COLOR))?;
-        let ball_rect =
-            graphics::Rect::new(self.game.ball.pos.x, 64.0 - self.game.ball.pos.y, 1.0, 1.0);
+        let ball_rect = graphics::Rect::new(
+            self.game.ball.pos.x - 0.5,
+            64.0 - (self.game.ball.pos.y - 0.5),
+            1.0,
+            1.0,
+        );
         graphics::rectangle(ctx, graphics::DrawMode::Fill, ball_rect)?;
 
         // Blocks
@@ -110,7 +113,27 @@ impl event::EventHandler for NativeGame {
 }
 
 fn main() {
-    let c = conf::Conf::new();
+    let window_setup = conf::WindowSetup {
+        title: "Ballistic Smashbing".to_string(),
+        icon: "".to_owned(),
+        resizable: false,
+        allow_highdpi: true,
+        samples: conf::NumSamples::One,
+    };
+    let window_mode = conf::WindowMode {
+        width: 64,
+        height: 64,
+        borderless: true,
+        fullscreen_type: conf::FullscreenType::True,
+        vsync: true,
+        min_width: 0,
+        max_width: 0,
+        min_height: 0,
+        max_height: 0,
+    };
+    let mut c = conf::Conf::new();
+    c.window_mode = window_mode;
+    c.window_setup = window_setup;
     let ctx = &mut Context::load_from_conf("Ballistic Smashbing", "Nathaniel Knight", c)
         .expect("Error creating context");
     setup_graphics(ctx).expect("Error setting up graphics");
