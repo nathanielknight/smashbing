@@ -19,11 +19,7 @@ impl SoundRepo {
 
     pub fn play(&self, id: &SoundId) -> ggez::GameResult<()> {
         match id {
-            SoundId::Bounce => {
-                if !self.bounce.playing() {
-                    self.bounce.play()?;
-                }
-            }
+            SoundId::Bounce => self.bounce.play(),
         };
         Ok(())
     }
