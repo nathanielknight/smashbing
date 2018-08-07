@@ -76,7 +76,7 @@ impl Ball {
         // Collide inelasticall with the ground
         if self.pos.y < MIN_Y {
             if self.vel.magnitude() > 0.7 {
-                effects.push(::Effect::Sound(::SoundId::Bounce));
+                effects.push(::Effect::Sound(::SoundId::BounceCharge));
             }
             if self.vel.magnitude() < BOUNCE_THRESHOLD {
                 self.pos.y = MIN_Y;

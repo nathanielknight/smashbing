@@ -40,6 +40,7 @@ pub enum Command {
 #[derive(Debug)]
 pub enum SoundId {
     Bounce,
+    BounceCharge,
 }
 
 #[derive(Debug)]
