@@ -6,6 +6,8 @@ use std::hash;
 use draw;
 use rect;
 
+// TODO: Add little pixel critters
+
 pub struct Block {
     id: u32,
     pub rect: rect::Rect,
@@ -45,7 +47,7 @@ impl hash::Hash for Block {
 }
 
 pub fn new_blockset() -> collections::HashSet<Block> {
-    // TODO: Colors (gradient? Random? Random Gradient?)
+    // TODO: Colors (gradient from Green to Green with random orientation and jitter)
     const BLOCKS_START_X: f32 = 8.0;
     const BLOCKS_START_Y: f32 = 16.0;
     let mut blocks = collections::HashSet::new();

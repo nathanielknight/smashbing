@@ -13,6 +13,7 @@ use libsmashbing::{Effect, Game, SoundId};
 
 mod sounds;
 
+// TODO: Pixelating Shader
 fn setup_graphics(ctx: &mut Context) -> GameResult<()> {
     graphics::set_fullscreen(ctx, false)?;
     graphics::set_screen_coordinates(ctx, graphics::Rect::new(0.0, 0.0, 64.0, 64.0))?;
