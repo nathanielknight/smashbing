@@ -129,7 +129,6 @@ impl NativeGame {
         for effect in effects {
             match effect {
                 Effect::Sound(sound_id) => self.play_sound(sound_id)?,
-                _ => panic!("Unknown effect"),
             }
         }
         Ok(())
