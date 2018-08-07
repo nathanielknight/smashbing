@@ -26,13 +26,12 @@ const GRAVITATIONAL_ACCELERATION: f32 = -60.0;
 /// Ball doesn't accelerate if less than this far from MIN_Y.
 const NORMAL_THRESHOLD: f32 = 0.2;
 
-// TODO Add impulse charges that reset on the ground?
-
 /// The player's ball
 #[derive(Debug)]
 pub struct Ball {
     pub pos: Vec2,
     pub vel: Vec2,
+    pub charges: u8,
     dist: rand::distributions::Uniform<f32>,
 }
 
@@ -43,6 +42,7 @@ impl Ball {
             pos: Vec2::new(x, y),
             vel: Vec2::new(dx, dy),
             dist: dist,
+            charges: 2,
         }
     }
 
@@ -76,7 +76,12 @@ impl Ball {
         // Collide inelasticall with the ground
         if self.pos.y < MIN_Y {
             if self.vel.magnitude() > 0.7 {
-                effects.push(::Effect::Sound(::SoundId::BounceCharge));
+                if self.charges < 2 {
+                    effects.push(::Effect::Sound(::SoundId::BounceCharge));
+                    self.charges = 2;
+                } else {
+                    effects.push(::Effect::Sound(::SoundId::Bounce));
+                }
             }
             if self.vel.magnitude() < BOUNCE_THRESHOLD {
                 self.pos.y = MIN_Y;
@@ -98,6 +103,10 @@ impl Ball {
     }
 
     pub fn fire_at(&mut self, x: f32, y: f32) {
+        if self.charges < 1 {
+            return;
+        }
+        self.charges -= 1;
         let mut dv = Vec2::new(x - self.pos.x, y - self.pos.y);
         dv.normalise();
         dv.scale(FIRE_IMPULSE);
