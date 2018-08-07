@@ -8,12 +8,7 @@ pub mod draw;
 pub mod rect;
 pub mod vec;
 
-/// Any object that should move during the dynamics step based **only** on
-/// its internal state (e.g. ball, particles).
-trait DynamicObject {
-    /// Update dynamics for a timestep dt
-    fn dyn_update(&mut self, dt: f32);
-}
+// TODO: Add Restart and Exit blocks when the field is cleared.
 
 pub struct Game {
     pub ball: ball::Ball,
@@ -34,7 +29,6 @@ impl Default for Game {
 pub enum Command {
     None,
     Fire(f32, f32),
-    // TODO: Implement a Reset command.
 }
 
 #[derive(Debug, Clone)]
