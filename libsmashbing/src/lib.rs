@@ -41,6 +41,13 @@ pub enum Command {
 pub enum SoundId {
     Bounce,
     BounceCharge,
+    Impulse,
+    ImpulseExhaust,
+    Break1,
+    Break2,
+    Break3,
+    Break4,
+    Win,
 }
 
 #[derive(Debug)]
