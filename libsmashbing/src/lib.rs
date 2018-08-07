@@ -37,8 +37,19 @@ pub enum Command {
     // TODO: Implement a Reset command.
 }
 
+#[derive(Debug)]
+pub enum SoundId {
+    Bounce,
+}
+
+#[derive(Debug)]
+pub enum Effect {
+    Sound(SoundId),
+}
+
 impl Game {
-    pub fn update(&mut self, dt: f32, commands: &[Command]) {
+    pub fn update(&mut self, dt: f32, commands: &[Command]) -> Vec<Effect> {
+        let mut effects: Vec<Effect> = Vec::new();
         // Handle User Input
         for cmd in commands {
             match cmd {
@@ -60,7 +71,10 @@ impl Game {
         }
 
         // Dynamics
-        self.ball.update(dt);
+        let ball_effects = self.ball.update(dt);
+        effects.extend(ball_effects);
+
         // Particles (todo)
+        effects
     }
 }

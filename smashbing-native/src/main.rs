@@ -9,10 +9,12 @@ use ggez::timer;
 use ggez::{Context, GameResult};
 
 use libsmashbing::draw;
-use libsmashbing::Game;
+use libsmashbing::{Effect, Game, SoundId};
+
+mod sounds;
 
 fn setup_graphics(ctx: &mut Context) -> GameResult<()> {
-    graphics::set_fullscreen(ctx, true)?;
+    graphics::set_fullscreen(ctx, false)?;
     graphics::set_screen_coordinates(ctx, graphics::Rect::new(0.0, 0.0, 64.0, 64.0))?;
     graphics::set_background_color(ctx, graphics::BLACK);
     Ok(())
@@ -49,6 +51,7 @@ struct NativeGame {
     game: Game,
     fire: bool,
     coords: CoordConverter,
+    sound_repo: sounds::SoundRepo,
 }
 
 fn convert_rect(inp: &libsmashbing::rect::Rect) -> graphics::Rect {
@@ -62,7 +65,6 @@ fn convert_rect(inp: &libsmashbing::rect::Rect) -> graphics::Rect {
 
 impl event::EventHandler for NativeGame {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        const TARGET_FPS: u32 = 60;
         let cmds = if self.fire {
             self.fire = false; // Reset listener.
             let pos = mouse::get_position(ctx).expect("Error getting mouse position");
@@ -71,12 +73,10 @@ impl event::EventHandler for NativeGame {
         } else {
             Vec::new()
         };
-        while timer::check_update_time(ctx, TARGET_FPS) {
-            let delta = timer::get_delta(ctx);
-            let dt = timer::duration_to_f64(delta);
-            // TODO: Handle effects from update (e.g. sounds).
-            self.game.update(dt as f32, &cmds);
-        }
+        let delta = timer::get_delta(ctx);
+        let dt = timer::duration_to_f64(delta);
+        let effects = self.game.update(dt as f32, &cmds);
+        self.do_effects(&effects)?;
         Ok(())
     }
 
@@ -114,10 +114,29 @@ fn main() {
         .expect("Error creating context");
     setup_graphics(ctx).expect("Error setting up graphics");
     let converter = CoordConverter::new(ctx);
+    let sounds = sounds::SoundRepo::new(ctx).expect("Error loading sounds");
     let mut game = NativeGame {
         game: libsmashbing::Game::default(),
         fire: false,
         coords: converter,
+        sound_repo: sounds,
     };
     event::run(ctx, &mut game).expect("Error running game");
+}
+
+impl NativeGame {
+    fn do_effects(&mut self, effects: &[Effect]) -> GameResult<()> {
+        for effect in effects {
+            match effect {
+                Effect::Sound(sound_id) => self.play_sound(sound_id)?,
+                _ => panic!("Unknown effect"),
+            }
+        }
+        Ok(())
+    }
+
+    fn play_sound(&mut self, sound_id: &SoundId) -> GameResult<()> {
+        self.sound_repo.play(sound_id)?;
+        Ok(())
+    }
 }

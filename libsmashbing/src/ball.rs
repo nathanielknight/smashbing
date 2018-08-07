@@ -12,9 +12,8 @@ const MAX_Y: f32 = 60.999;
 
 /// Ball doesn't bounce if it hits the ground with less than this velocity.
 const BOUNCE_THRESHOLD: f32 = 3.0;
-
 /// Y-Velocity is scaled by this much with each bounce.
-const BOUNCE_FACTOR: f32 = 0.4;
+const BOUNCE_FACTOR: f32 = 0.6;
 
 /// Magnitude of velocity to add when firing
 const FIRE_IMPULSE: f32 = 70.0;
@@ -24,6 +23,8 @@ const BLOCK_DAMPING: f32 = 0.3;
 
 /// Amount the ball's y velocity decreases each second.
 const GRAVITATIONAL_ACCELERATION: f32 = -60.0;
+/// Ball doesn't accelerate if less than this far from MIN_Y.
+const NORMAL_THRESHOLD: f32 = 0.2;
 
 // TODO Add impulse charges that reset on the ground?
 
@@ -37,8 +38,7 @@ pub struct Ball {
 
 impl Ball {
     pub fn new(x: f32, y: f32, dx: f32, dy: f32) -> Ball {
-        let mut rng = rand::thread_rng();
-        let mut dist = rand::distributions::Uniform::new(-PI / 6.0, PI / 6.0);
+        let dist = rand::distributions::Uniform::new(-PI / 6.0, PI / 6.0);
         Ball {
             pos: Vec2::new(x, y),
             vel: Vec2::new(dx, dy),
@@ -46,24 +46,40 @@ impl Ball {
         }
     }
 
-    pub fn update(&mut self, dt: f32) {
+    pub fn update(&mut self, dt: f32) -> Vec<::Effect> {
+        let mut effects = Vec::new();
         self.pos += self.vel.scaled(dt);
-        self.vel.y += GRAVITATIONAL_ACCELERATION * dt;
+        if self.pos.y > MIN_Y + NORMAL_THRESHOLD {
+            // Stop falling if "resting" on the ground.
+            println!("gravitying at {}", self.pos.y);
+            self.vel.y += GRAVITATIONAL_ACCELERATION * dt;
+        }
         // Collide elastically off side and top walls
+        let mut bounced = false;
         if self.pos.x < MIN_X {
             self.pos.x = MIN_X;
             self.vel.x *= -1.0;
+            bounced = true;
         }
         if self.pos.x > MAX_X {
             self.pos.x = MAX_X;
             self.vel.x *= -1.0;
+            bounced = true;
         }
         if self.pos.y > MAX_Y {
             self.pos.y = MAX_Y;
             self.vel.y *= -1.0;
+            bounced = true;
+        }
+        if bounced && self.vel.magnitude() > 0.7 {
+            effects.push(::Effect::Sound(::SoundId::Bounce));
         }
         // Collide inelasticall with the ground
         if self.pos.y < MIN_Y {
+            if self.vel.magnitude() > 0.7 {
+                println!("ball.vel.magnitude(): {}", self.vel.magnitude());
+                effects.push(::Effect::Sound(::SoundId::Bounce));
+            }
             if self.vel.magnitude() < BOUNCE_THRESHOLD {
                 self.pos.y = MIN_Y;
                 self.vel = Vec2::new(0.0, 0.0);
@@ -73,6 +89,7 @@ impl Ball {
                 self.vel.x *= BOUNCE_FACTOR;
             }
         }
+        effects
     }
 
     pub fn block_collide(&mut self) {
