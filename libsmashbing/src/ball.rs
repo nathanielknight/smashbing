@@ -135,3 +135,9 @@ impl Ball {
         }
     }
 }
+
+impl Default for Ball {
+    fn default() -> Ball {
+        Ball::new(3.0, 3.0, 4.0, 4.0)
+    }
+}

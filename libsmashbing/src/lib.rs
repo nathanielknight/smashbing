@@ -20,7 +20,7 @@ pub struct Game {
 impl Default for Game {
     fn default() -> Game {
         Game {
-            ball: ball::Ball::new(3.0, 3.0, 4.0, 1.0),
+            ball: ball::Ball::default(),
             blocks: block::new_blockset(),
         }
     }
@@ -82,10 +82,19 @@ impl Game {
         let ball_effects = self.ball.update(dt);
         effects.extend(ball_effects);
 
+        if self.blocks.iter().count() == 0 {
+            self.reset();
+        }
+
         effects
     }
 
     pub fn freed_critters(&self) -> u8 {
         block::freed_critters(&self.blocks)
+    }
+
+    fn reset(&mut self) {
+        self.ball = ball::Ball::default();
+        self.blocks = block::new_blockset();
     }
 }
