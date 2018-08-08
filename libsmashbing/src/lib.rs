@@ -5,7 +5,6 @@ use std::collections;
 pub mod ball;
 pub mod block;
 pub mod draw;
-pub mod particles;
 pub mod rect;
 pub mod vec;
 
@@ -15,6 +14,8 @@ pub struct Game {
     pub ball: ball::Ball,
     pub blocks: collections::HashSet<block::Block>,
 }
+
+/// Minimum ball velocity for particle spawn.
 
 impl Default for Game {
     fn default() -> Game {
@@ -81,7 +82,6 @@ impl Game {
         let ball_effects = self.ball.update(dt);
         effects.extend(ball_effects);
 
-        // TODO: Particles
         effects
     }
 }

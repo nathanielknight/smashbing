@@ -100,21 +100,6 @@ impl event::EventHandler for NativeGame {
             graphics::rectangle(ctx, graphics::DrawMode::Fill, block_rect)?;
         }
 
-        // Particles
-        for particle in self.game.particles.iter_particles() {
-            graphics::set_color(ctx, convert_color(&particle.color))?;
-            graphics::rectangle(
-                ctx,
-                graphics::DrawMode::Fill,
-                graphics::Rect::new(
-                    particle.pos.x - 0.5,
-                    64.0 - (particle.pos.y - 1.0),
-                    1.0,
-                    1.0,
-                ),
-            )?;
-        }
-
         graphics::present(ctx);
         timer::yield_now();
         Ok(())
