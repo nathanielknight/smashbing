@@ -19,7 +19,7 @@ pub struct Game {
 impl Default for Game {
     fn default() -> Game {
         Game {
-            ball: ball::Ball::new(10.0, 10.0, 300.0, 300.0),
+            ball: ball::Ball::new(3.0, 3.0, 4.0, 1.0),
             blocks: block::new_blockset(),
         }
     }
