@@ -100,6 +100,15 @@ impl event::EventHandler for NativeGame {
             graphics::rectangle(ctx, graphics::DrawMode::Fill, block_rect)?;
         }
 
+        // Critters
+        graphics::set_color(ctx, graphics::Color::new(0.1, 0.1, 0.9, 1.0))?;
+        let parent_rect = graphics::Rect::new(6.0, 59.0, 3.0, 3.0);
+        graphics::rectangle(ctx, graphics::DrawMode::Fill, parent_rect)?;
+        for idx in 0..self.game.freed_critters() {
+            let critter_rect = graphics::Rect::new(10.0 + idx as f32 * 3.0, 60.0, 2.0, 2.0);
+            graphics::rectangle(ctx, graphics::DrawMode::Fill, critter_rect)?;
+        }
+
         graphics::present(ctx);
         timer::yield_now();
         Ok(())

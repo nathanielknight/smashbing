@@ -8,8 +8,6 @@ use rand::{thread_rng, Rng};
 use draw;
 use rect;
 
-// TODO: Add little pixel critters
-
 pub struct Block {
     id: u32,
     pub rect: rect::Rect,
@@ -128,4 +126,8 @@ pub fn new_blockset() -> collections::HashSet<Block> {
         }
     }
     blocks
+}
+
+pub fn freed_critters(blocks: &collections::HashSet<Block>) -> u8 {
+    (CRITTER_BLOCKS as u8) - blocks.iter().filter(|b| b.is_critter).count() as u8
 }

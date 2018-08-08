@@ -84,4 +84,8 @@ impl Game {
 
         effects
     }
+
+    pub fn freed_critters(&self) -> u8 {
+        block::freed_critters(&self.blocks)
+    }
 }
