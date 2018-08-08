@@ -61,7 +61,6 @@ fn random_color(i: &usize, j: &usize) -> draw::Color {
 
     // This is a linear interpolation between two greens.
     // i.e: color = light - (dark - light) * scale
-    println!("scale: {}", scale);
     let r = 0.392 + (0.049 - 0.392) * scale;
     let g = 0.875 + (0.456 - 0.875) * scale;
     let b = 0.129 + (0.133 - 0.129) * scale;
@@ -99,9 +98,6 @@ fn random_critter_locations<'a>() -> [(u8, u8); CRITTER_BLOCKS] {
 fn test_criter_locations() {
     let locs = random_critter_locations();
     assert_eq!(locs.len(), CRITTER_BLOCKS);
-    for l in locs.iter() {
-        println!("loc: {}, {}", l.0, l.1);
-    }
 }
 
 pub fn new_blockset() -> collections::HashSet<Block> {
