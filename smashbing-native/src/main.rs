@@ -83,6 +83,11 @@ impl event::EventHandler for NativeGame {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx);
 
+        // Court
+        graphics::set_color(ctx, graphics::Color::new(0.1, 0.1, 0.1, 1.0))?;
+        let court_rect = graphics::Rect::new(3.0, 3.0, 58.0, 56.0);
+        graphics::rectangle(ctx, graphics::DrawMode::Fill, court_rect)?;
+
         // Ball
         graphics::set_color(ctx, convert_color(&draw::BALL_COLOR))?;
         let ball_rect = graphics::Rect::new(
