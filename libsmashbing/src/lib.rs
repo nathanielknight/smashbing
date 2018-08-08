@@ -5,6 +5,7 @@ use std::collections;
 pub mod ball;
 pub mod block;
 pub mod draw;
+pub mod particles;
 pub mod rect;
 pub mod vec;
 
@@ -80,7 +81,7 @@ impl Game {
         let ball_effects = self.ball.update(dt);
         effects.extend(ball_effects);
 
-        // Particles (todo)
+        // TODO: Particles
         effects
     }
 }
