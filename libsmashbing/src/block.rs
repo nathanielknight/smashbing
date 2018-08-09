@@ -28,7 +28,14 @@ const BLOCK_HEIGHT: f32 = 5.0;
 const CRITTER_BLOCKS: usize = 7;
 
 impl Block {
-    fn new(id: u32, x: f32, y: f32, c: draw::Color, critter: bool, effect: BlockEffect) -> Block {
+    pub fn new(
+        id: u32,
+        x: f32,
+        y: f32,
+        c: draw::Color,
+        critter: bool,
+        effect: BlockEffect,
+    ) -> Block {
         let r = rect::Rect::new(x, x + BLOCK_WIDTH, y, y + BLOCK_HEIGHT);
         Block {
             id: id,

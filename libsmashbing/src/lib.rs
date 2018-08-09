@@ -8,8 +8,6 @@ pub mod draw;
 pub mod rect;
 pub mod vec;
 
-// TODO: Add Restart and Exit blocks when the field is cleared.
-
 pub struct Game {
     pub ball: ball::Ball,
     pub blocks: collections::HashSet<block::Block>,
@@ -67,11 +65,22 @@ impl Game {
         }
         // Collisions
         let mut colliding = false;
+        let mut reset = false;
         for block in &self.blocks {
             if block.rect.contains(&self.ball.pos) {
                 colliding = true;
+                match block.effect {
+                    block::BlockEffect::None => (),
+                    block::BlockEffect::Reset => reset = true,
+                    block::BlockEffect::Exit => effects.push(Effect::Exit),
+                };
             }
         }
+        if reset {
+            self.reset();
+            return effects;
+        }
+
         if colliding {
             let collision_effects = self.ball.block_collide();
             effects.extend(collision_effects);
@@ -84,7 +93,8 @@ impl Game {
         effects.extend(ball_effects);
 
         if self.blocks.iter().count() == 0 {
-            self.reset();
+            effects.push(Effect::Sound(SoundId::Win));
+            self.set_menu();
         }
 
         effects
@@ -97,5 +107,24 @@ impl Game {
     fn reset(&mut self) {
         self.ball = ball::Ball::default();
         self.blocks = block::new_blockset();
+    }
+
+    fn set_menu(&mut self) {
+        self.blocks.insert(block::Block::new(
+            0,
+            8.0,
+            26.0,
+            (0.9, 0.1, 0.1, 0.1),
+            false,
+            block::BlockEffect::Exit,
+        ));
+        self.blocks.insert(block::Block::new(
+            1,
+            48.0,
+            26.0,
+            (0.1, 0.9, 0.1, 0.1),
+            false,
+            block::BlockEffect::Reset,
+        ));
     }
 }
