@@ -49,6 +49,7 @@ pub enum SoundId {
 #[derive(Debug)]
 pub enum Effect {
     Sound(SoundId),
+    Exit,
 }
 
 impl Game {

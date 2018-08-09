@@ -8,11 +8,18 @@ use rand::{thread_rng, Rng};
 use draw;
 use rect;
 
+pub enum BlockEffect {
+    None,
+    Reset,
+    Exit,
+}
+
 pub struct Block {
     id: u32,
     pub rect: rect::Rect,
     pub color: draw::Color,
     is_critter: bool,
+    pub effect: BlockEffect,
 }
 
 const BLOCK_WIDTH: f32 = 8.0;
@@ -21,13 +28,14 @@ const BLOCK_HEIGHT: f32 = 5.0;
 const CRITTER_BLOCKS: usize = 7;
 
 impl Block {
-    fn new(id: u32, x: f32, y: f32, c: draw::Color, critter: bool) -> Block {
+    fn new(id: u32, x: f32, y: f32, c: draw::Color, critter: bool, effect: BlockEffect) -> Block {
         let r = rect::Rect::new(x, x + BLOCK_WIDTH, y, y + BLOCK_HEIGHT);
         Block {
             id: id,
             rect: r,
             color: c,
             is_critter: critter,
+            effect: effect,
         }
     }
 }
@@ -116,7 +124,7 @@ pub fn new_blockset() -> collections::HashSet<Block> {
             };
             let x = BLOCKS_START_X + (i as f32) * BLOCK_WIDTH;
             let y = BLOCKS_START_Y + (j as f32) * BLOCK_HEIGHT;
-            let block = Block::new(id, x, y, c, critter);
+            let block = Block::new(id, x, y, c, critter, BlockEffect::None);
             blocks.insert(block);
             id += 1;
         }

@@ -76,7 +76,7 @@ impl event::EventHandler for NativeGame {
         let delta = timer::get_delta(ctx);
         let dt = timer::duration_to_f64(delta);
         let effects = self.game.update(dt as f32, &cmds);
-        self.do_effects(&effects)?;
+        self.do_effects(ctx, &effects)?;
         Ok(())
     }
 
@@ -163,10 +163,11 @@ fn main() {
 }
 
 impl NativeGame {
-    fn do_effects(&mut self, effects: &[Effect]) -> GameResult<()> {
+    fn do_effects(&mut self, ctx: &mut ggez::Context, effects: &[Effect]) -> GameResult<()> {
         for effect in effects {
             match effect {
                 Effect::Sound(sound_id) => self.play_sound(sound_id)?,
+                Effect::Exit => ctx.quit()?,
             }
         }
         Ok(())
