@@ -6,6 +6,6 @@ authors = ["Nat Knight <nathaniel.ep@gmail.com>"]
 [dependencies]
 
 [dependencies.rand]
-version = "*"
-default-features = true
-features = ["stdweb"]
+git = "https://github.com/rust-random/rand"
+version = "0.6.0-pre.0"
+features = ["wasm-bindgen"]
