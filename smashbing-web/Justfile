@@ -1,12 +1,13 @@
 build:
-    cargo +nightly build --target wasm32-unknown-unknown
+    cargo build --target wasm32-unknown-unknown
 
-bind:
-    wasm-bindgen ../target/wasm32-unknown-unknown/debug/smashbing_web.wasm --out-dir . --no-modules
+bind: build
+    wasm-bindgen target/wasm32-unknown-unknown/debug/smashbing_web.wasm --out-dir . --no-modules
 
 get-tools:
     rustup target add wasm32-unknown-unknown --toolchain nightly
-    cargo +nightly install --force wasm-bindgen-cli
+    cargo install --force wasm-bindgen-cli
 
 clean:
     rm -f *.js *.ts *.wasm
+    cargo clean

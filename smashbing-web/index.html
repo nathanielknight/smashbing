@@ -5,25 +5,18 @@
 </head>
 
 <body>
+    <script src="smashbing_web.js"></script>
     <script>
-        // The `--no-modules`-generated JS from `wasm-bindgen` attempts to use
-        // `WebAssembly.instantiateStreaming` to instantiate the wasm module,
-        // but this doesn't work with `file://` urls. This example is frequently
-        // viewed by simply opening `index.html` in a browser (with a `file://`
-        // url), so it would fail if we were to call this function!
-        //
-        // Work around this for now by deleting the function to ensure that the
-        // `no_modules.js` script doesn't have access to it. You won't need this
-        // hack when deploying over HTTP.
         delete WebAssembly.instantiateStreaming;
-    </script>
-    <script src="./smashbing_web.js"></script>
-    <script>
-        const { greet } = wasm_bindgen;
+
+
+        const { new_game } = wasm_bindgen;
 
         function run() {
-            greet("World");
-        }
+            var game = new_game();
+            console.log(game);
+            console.log(game.get_ball_pos());
+        };
 
         wasm_bindgen("./smashbing_web_bg.wasm")
             .then(run).catch(console.error);
