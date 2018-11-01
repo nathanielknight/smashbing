@@ -1,2 +1,5 @@
 target/
 .vscode/
+
+# Just until I'm ready to release
+**/Cargo.lock
