@@ -10,12 +10,11 @@
         delete WebAssembly.instantiateStreaming;
 
 
-        const { new_game } = wasm_bindgen;
+        const { embed } = wasm_bindgen;
 
         function run() {
-            var game = new_game();
-            console.log(game);
-            console.log(game.get_ball_pos());
+            embed();
+            console.log("game embedded");
         };
 
         wasm_bindgen("./smashbing_web_bg.wasm")
