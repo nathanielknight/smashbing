@@ -4,6 +4,84 @@ extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub fn embed() {
-    let mut game = libsmashbing::Game::default();
+extern "C" {
+    fn draw_rect(x: f32, y: f32, w: f32, h: f32, c: String);
+}
+
+#[wasm_bindgen]
+pub struct EmbeddedGame {
+    game: libsmashbing::Game,
+    commands: Vec<libsmashbing::Command>,
+}
+
+impl Default for EmbeddedGame {
+    fn default() -> Self {
+        let game = libsmashbing::Game::default();
+        EmbeddedGame {
+            game,
+            commands: vec![],
+        }
+    }
+}
+
+#[wasm_bindgen]
+impl EmbeddedGame {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        EmbeddedGame::default()
+    }
+
+    #[wasm_bindgen]
+    pub fn update(&mut self, dt: f32) {
+        let _ = self.game.update(dt, &self.commands);
+    }
+
+    #[wasm_bindgen]
+    pub fn render(&self) {
+        for block in &self.game.blocks {
+            let x = block.rect.left;
+            let y = block.rect.top;
+            let w = block.rect.right - block.rect.left;
+            let h = block.rect.top - block.rect.bottom;
+            let c = Color::from_game_color(&block.color);
+            draw_rect(x, y, w, h, c.as_style());
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct Color {
+    r: u8,
+    g: u8,
+    b: u8,
+    a: u8,
+}
+
+impl Color {
+    fn from_game_color(game_color: &libsmashbing::draw::Color) -> Self {
+        let (r, g, b, a) = game_color;
+        Color {
+            r: float_to_html_color(*r),
+            g: float_to_html_color(*g),
+            b: float_to_html_color(*b),
+            a: float_to_html_color(*a),
+        }
+    }
+
+    fn as_style(&self) -> String {
+        format!("rgba({}, {}, {}, {})", self.r, self.g, self.b, self.a)
+    }
+}
+
+fn float_to_html_color(x: f32) -> u8 {
+    assert!(0.0 <= x && x <= 1.0, "Color out of bounds: {:?}", x);
+    (x * 255.0) as u8
+}
+
+#[test]
+fn test_float_to_html_color() {
+    for i in 0..=100 {
+        let x: f32 = i as f32 / 100.0;
+        float_to_html_color(x);
+    }
 }

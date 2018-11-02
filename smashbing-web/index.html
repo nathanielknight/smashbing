@@ -5,16 +5,25 @@
 </head>
 
 <body>
+    <canvas id="game"></canvas>
     <script src="smashbing_web.js"></script>
     <script>
         delete WebAssembly.instantiateStreaming;
 
+        let gameCanvas = document.getElementById("game");
+        let ctx = gameCanvas.getContext("2d");
+        var game;
 
-        const { embed } = wasm_bindgen;
+        function draw_rect(x, y, w, h, c) {
+            console.log("rendering: ", x, y, w, h, c);
+            ctx.fillStyle = c;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        const { EmbeddedGame } = wasm_bindgen;
 
         function run() {
-            embed();
-            console.log("game embedded");
+            game = new EmbeddedGame();
         };
 
         wasm_bindgen("./smashbing_web_bg.wasm")
