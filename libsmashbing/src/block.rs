@@ -67,6 +67,16 @@ impl hash::Hash for Block {
 const BLOCK_COLS: usize = 6;
 const BLOCK_ROWS: usize = 8;
 
+fn clamp(x: f32, floor: f32, ceil: f32) -> f32 {
+    if x < floor {
+        return floor;
+    }
+    if x > ceil {
+        return ceil;
+    }
+    x
+}
+
 fn random_color(i: &usize, j: &usize) -> draw::Color {
     let dist = rand::distributions::Uniform::new(-0.3, 0.3);
     let mut rng = thread_rng();
@@ -76,9 +86,9 @@ fn random_color(i: &usize, j: &usize) -> draw::Color {
 
     // This is a linear interpolation between two greens.
     // i.e: color = light - (dark - light) * scale
-    let r = 0.392 + (0.049 - 0.392) * scale;
-    let g = 0.875 + (0.456 - 0.875) * scale;
-    let b = 0.129 + (0.133 - 0.129) * scale;
+    let r = clamp(0.392 + (0.049 - 0.392) * scale, 0.0, 1.0);
+    let g = clamp(0.875 + (0.456 - 0.875) * scale, 0.0, 1.0);
+    let b = clamp(0.129 + (0.133 - 0.129) * scale, 0.0, 1.0);
     (r, g, b, 1.0)
 }
 
