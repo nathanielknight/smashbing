@@ -38,13 +38,25 @@ impl EmbeddedGame {
 
     #[wasm_bindgen]
     pub fn render(&self) {
+        draw_rect(0.0, 0.0, 64.0, 64.0, "black".to_owned());
         for block in &self.game.blocks {
             let x = block.rect.left;
-            let y = block.rect.top;
+            let y = 64.0 - block.rect.top;
             let w = block.rect.right - block.rect.left;
             let h = block.rect.top - block.rect.bottom;
             let c = Color::from_game_color(&block.color);
             draw_rect(x, y, w, h, c.as_style());
+        }
+        {
+            let ball_pos = &self.game.ball.pos;
+            const BALL_SIZE: f32 = 4.0;
+            draw_rect(
+                ball_pos.x - BALL_SIZE / 2.0,
+                64.0 - (ball_pos.y - BALL_SIZE / 2.0),
+                BALL_SIZE,
+                BALL_SIZE,
+                "red".to_owned(),
+            );
         }
     }
 }
@@ -84,4 +96,9 @@ fn test_float_to_html_color() {
         let x: f32 = i as f32 / 100.0;
         float_to_html_color(x);
     }
+}
+
+#[test]
+fn test_float_to_html_on_game() {
+    let game = EmbeddedGame::default();
 }
