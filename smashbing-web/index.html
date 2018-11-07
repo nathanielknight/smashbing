@@ -35,6 +35,26 @@
         }
 
         let sounds = {
+            "bounce": new Audio("./sounds/bounce.wav"),
+            "bounce_charge": new Audio("./sounds/bounce-charge.wav"),
+            "impulse": new Audio("./sounds/impulse.wav"),
+            "impulse_exhaust": new Audio("./sounds/impulse-exhaust.wav"),
+            "break1": new Audio("./sounds/break1.wav"),
+            "break2": new Audio("./sounds/break2.wav"),
+            "break3": new Audio("./sounds/break3.wav"),
+            "break4": new Audio("./sounds/break4.wav"),
+            "win": new Audio("./sounds/win.wav")
+        };
+
+        function play_sound(sound_key) {
+            // TODO: Figure out how to make this less laggy
+            let sound = sounds[sound_key]
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play();
+            }
+        }
+
         const { EmbeddedGame } = wasm_bindgen;
 
         function run() {

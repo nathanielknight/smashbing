@@ -6,6 +6,7 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     fn draw_rect(x: f32, y: f32, w: f32, h: f32, c: String);
+    fn play_sound(sound_id: &str);
     fn exit();
 }
 
@@ -34,7 +35,27 @@ impl EmbeddedGame {
 
     #[wasm_bindgen]
     pub fn update(&mut self, dt: f32) {
-        let _ = self.game.update(dt, &self.commands);
+        let effects = self.game.update(dt, &self.commands);
+        for effect in &effects {
+            use libsmashbing::{Effect, SoundId};
+            match effect {
+                Effect::Exit => exit(),
+                Effect::Sound(sid) => match sid {
+                    SoundId::Bounce => play_sound("bounce"),
+                    SoundId::BounceCharge => play_sound("bouncecharge"),
+                    SoundId::Impulse => play_sound("impulse"),
+                    SoundId::ImpulseExhaust => play_sound("impulseexhaust"),
+                    SoundId::Break1 => play_sound("break1"),
+                    SoundId::Break2 => play_sound("break2"),
+                    SoundId::Break3 => play_sound("break3"),
+                    SoundId::Break4 => play_sound("break4"),
+                    SoundId::Win => play_sound("win"),
+                },
+            }
+        }
+
+        self.render();
+        self.commands.clear();
     }
 
     #[wasm_bindgen]
