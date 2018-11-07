@@ -6,6 +6,7 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     fn draw_rect(x: f32, y: f32, w: f32, h: f32, c: String);
+    fn exit();
 }
 
 #[wasm_bindgen]

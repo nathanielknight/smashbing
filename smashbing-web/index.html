@@ -28,6 +28,13 @@
             ctx.fillRect(x, y, w, h);
         }
 
+        function exit() {
+            // TODO: Can't close window from JS; Figure out what to do
+            // about this.
+            window.close();
+        }
+
+        let sounds = {
         const { EmbeddedGame } = wasm_bindgen;
 
         function run() {
