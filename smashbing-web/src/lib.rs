@@ -60,7 +60,9 @@ impl EmbeddedGame {
 
     #[wasm_bindgen]
     pub fn render(&self) {
+        // Background
         draw_rect(0.0, 0.0, 64.0, 64.0, "black".to_owned());
+        // Blocks
         for block in &self.game.blocks {
             let x = block.rect.left;
             let y = 64.0 - block.rect.top;
@@ -69,15 +71,28 @@ impl EmbeddedGame {
             let c = Color::from_game_color(&block.color);
             draw_rect(x, y, w, h, c.as_style());
         }
+        // Ball
         {
             let ball_pos = &self.game.ball.pos;
-            const BALL_SIZE: f32 = 4.0;
+            const BALL_SIZE: f32 = 2.0;
             draw_rect(
                 ball_pos.x - BALL_SIZE / 2.0,
                 64.0 - (ball_pos.y - BALL_SIZE / 2.0),
                 BALL_SIZE,
                 BALL_SIZE,
                 "red".to_owned(),
+            );
+        }
+        // "Critters"
+        const CRITTER_COLOR: &'static str = "blue";
+        draw_rect(6.0, 59.0, 3.0, 3.0, CRITTER_COLOR.to_owned());
+        for idx in 0..self.game.freed_critters() {
+            draw_rect(
+                10.0 + (idx as f32) * 3.0,
+                60.0,
+                2.0,
+                2.0,
+                CRITTER_COLOR.to_owned(),
             );
         }
     }
