@@ -9,13 +9,21 @@
     <script src="smashbing_web.js"></script>
     <script>
         delete WebAssembly.instantiateStreaming;
+        const CANVAS_SCALE = 64.0 / 256.0;
+        const DELTA_TIME = 1.0 / 60.0;
 
         let gameCanvas = document.getElementById("game");
         let ctx = gameCanvas.getContext("2d");
         var game;
 
+        gameCanvas.onclick = function (evt) {
+            let x = evt.clientX * CANVAS_SCALE;
+            let y = evt.clientY * CANVAS_SCALE;
+            console.log("onclick @ %f %f", x, y);
+            game.fire_at(x, y);
+        }
+
         function draw_rect(x, y, w, h, c) {
-            console.log("rendering: ", x, y, w, h, c);
             ctx.fillStyle = c;
             ctx.fillRect(x, y, w, h);
         }
@@ -24,6 +32,10 @@
 
         function run() {
             game = new EmbeddedGame();
+            setInterval(
+                function () { game.update(DELTA_TIME); },
+                DELTA_TIME * 1000,
+            );
         };
 
         wasm_bindgen("./smashbing_web_bg.wasm")

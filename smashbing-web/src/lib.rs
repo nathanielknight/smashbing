@@ -59,6 +59,12 @@ impl EmbeddedGame {
             );
         }
     }
+
+    #[wasm_bindgen]
+    pub fn fire_at(&mut self, x: f32, y: f32) {
+        let cmd = libsmashbing::Command::Fire(x, 64.0 - y);
+        self.commands.push(cmd);
+    }
 }
 
 #[derive(Default)]
