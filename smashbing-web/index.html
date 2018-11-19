@@ -1,91 +1,85 @@
 <html>
-
-<head>
+  <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
     <title>Ballistic Smashbing!</title>
     <style>
-        #container {
-            margin: auto;
-            max-width: 512px;
-        }
+      #container {
+        margin: auto;
+        max-width: 512px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <div id="container">
-        <canvas width="64" height="64" id="game"></canvas>
-    </div>
+  <body>
+    <div id="container"><canvas width="64" height="64" id="game"></canvas></div>
     <script src="smashbing_web.js"></script>
+    <script src="audioplayer.js"></script>
     <script>
-        delete WebAssembly.instantiateStreaming;
-        const CANVAS_OPTS = {
-            antialias: false,
-        };
+      delete WebAssembly.instantiateStreaming;
+      const CANVAS_OPTS = {
+        antialias: false
+      };
 
-        // TODO: Maximize the canvas in width or height, as appropriate.
-        const CANVAS_SIZE = 64.0;
-        const CANVAS_STYLE_SIZE = 512.0;
-        const CANVAS_SCALE = CANVAS_SIZE / CANVAS_STYLE_SIZE;
+      // TODO: Maximize the canvas in width or height, as appropriate.
+      const CANVAS_SIZE = 64.0;
+      const CANVAS_STYLE_SIZE = 512.0;
+      const CANVAS_SCALE = CANVAS_SIZE / CANVAS_STYLE_SIZE;
 
-        let gameCanvas = document.getElementById("game");
-        gameCanvas.setAttribute("style", `width: ${CANVAS_STYLE_SIZE}px; height: ${CANVAS_STYLE_SIZE}px;`)
-        let ctx = gameCanvas.getContext("2d", CANVAS_OPTS);
-        var game;
+      let gameCanvas = document.getElementById("game");
+      gameCanvas.setAttribute(
+        "style",
+        `width: ${CANVAS_STYLE_SIZE}px; height: ${CANVAS_STYLE_SIZE}px;`
+      );
+      let ctx = gameCanvas.getContext("2d", CANVAS_OPTS);
+      var game;
 
-        gameCanvas.onclick = function (evt) {
-            let x = (evt.clientX - gameCanvas.offsetLeft) * CANVAS_SCALE;
-            let y = (evt.clientY - gameCanvas.offsetTop) * CANVAS_SCALE;
-            console.log("onclick @ %f %f", x, y);
-            game.fire_at(x, y);
-        }
+      gameCanvas.onclick = function(evt) {
+        let x = (evt.clientX - gameCanvas.offsetLeft) * CANVAS_SCALE;
+        let y = (evt.clientY - gameCanvas.offsetTop) * CANVAS_SCALE;
+        console.log("onclick @ %f %f", x, y);
+        game.fire_at(x, y);
+      };
 
-        function draw_rect(x, y, w, h, c) {
-            ctx.fillStyle = c;
-            ctx.fillRect(x, y, w, h);
-        }
+      function draw_rect(x, y, w, h, c) {
+        ctx.fillStyle = c;
+        ctx.fillRect(x, y, w, h);
+      }
 
-        function exit() {
-            // TODO: Can't close window from JS; Figure out what to do
-            // about this.
-            // window.close();
-        }
+      function exit() {
+        // TODO: Can't close window from JS; Figure out what to do
+        // about this.
+        // window.close();
+      }
 
-        // let sounds = {
-        //     "bounce": new Audio("./sounds/bounce.wav"),
-        //     "bounce_charge": new Audio("./sounds/bounce-charge.wav"),
-        //     "impulse": new Audio("./sounds/impulse.wav"),
-        //     "impulse_exhaust": new Audio("./sounds/impulse-exhaust.wav"),
-        //     "break1": new Audio("./sounds/break1.wav"),
-        //     "break2": new Audio("./sounds/break2.wav"),
-        //     "break3": new Audio("./sounds/break3.wav"),
-        //     "break4": new Audio("./sounds/break4.wav"),
-        //     "win": new Audio("./sounds/win.wav")
-        // };
+      let player = new AudioPlayer();
+      player.addAudio("bounce", "./sounds/bounce.wav");
+      player.addAudio("bounce_charge", "./sounds/bounce-charge.wav");
+      player.addAudio("impulse", "./sounds/impulse.wav");
+      player.addAudio("impulse_exhaust", "./sounds/impulse-exhaust.wav");
+      player.addAudio("break1", "./sounds/break1.wav");
+      player.addAudio("break2", "./sounds/break2.wav");
+      player.addAudio("break3", "./sounds/break3.wav");
+      player.addAudio("break4", "./sounds/break4.wav");
+      player.addAudio("win", "./sounds/win.wav");
 
-        function play_sound(sound_key) {
-            // TODO: Figure out how to make this less laggy
-            // let sound = sounds[sound_key]
-            // if (sound) {
-            //     sound.currentTime = 0;
-            //     sound.play();
-            // }
-        }
+      function play_sound(soundKey) {
+        player.playSound(soundKey);
+      }
 
-        const { EmbeddedGame } = wasm_bindgen;
+      const { EmbeddedGame } = wasm_bindgen;
 
-        const DELTA_TIME = 1.0 / 60.0;
+      const DELTA_TIME = 1.0 / 60.0;
 
-        function run() {
-            game = new EmbeddedGame();
-            setInterval(
-                function () { game.update(DELTA_TIME); },
-                DELTA_TIME * 1000,
-            );
-        };
+      function run() {
+        game = new EmbeddedGame();
+        setInterval(function() {
+          game.update(DELTA_TIME);
+        }, DELTA_TIME * 1000);
+      }
 
-        wasm_bindgen("./smashbing_web_bg.wasm")
-            .then(run).catch(console.error);
+      wasm_bindgen("./smashbing_web_bg.wasm")
+        .then(run)
+        .catch(console.error);
     </script>
-</body>
-
+  </body>
 </html>

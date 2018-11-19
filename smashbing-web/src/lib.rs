@@ -44,7 +44,7 @@ impl EmbeddedGame {
                     SoundId::Bounce => play_sound("bounce"),
                     SoundId::BounceCharge => play_sound("bouncecharge"),
                     SoundId::Impulse => play_sound("impulse"),
-                    SoundId::ImpulseExhaust => play_sound("impulseexhaust"),
+                    SoundId::ImpulseExhaust => play_sound("impulse_exhaust"),
                     SoundId::Break1 => play_sound("break1"),
                     SoundId::Break2 => play_sound("break2"),
                     SoundId::Break3 => play_sound("break3"),

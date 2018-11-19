@@ -1,5 +1,5 @@
 # Clean up old builds
-get-childitem release | remove-item
+get-childitem release | remove-item -Recurse
 
 # Build the WASM files
 cargo +nightly build --release --target wasm32-unknown-unknown
@@ -9,8 +9,8 @@ Remove-Item -Path "release/smashbing_web.d.ts"
 
 # Deploy index
 Copy-Item -Path "index.html" -Destination "./release/"
-
-# Skip sound for now
-# foreach ($sound in (gci ../sounds)) {
-#     Copy-Item -Path "../sounds/$sound" -Destination "./sounds/"
-# }
+Copy-Item -Path "audioplayer.js" -Destination "./release/"
+New-Item -ItemType Directory -Path "./release/sounds"
+foreach ($sound in (Get-ChildItem ../sounds)) {
+    Copy-Item -Path "../sounds/$sound" -Destination "./release/sounds/"
+}
