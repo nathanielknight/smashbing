@@ -42,7 +42,7 @@ impl EmbeddedGame {
                 Effect::Exit => exit(),
                 Effect::Sound(sid) => match sid {
                     SoundId::Bounce => play_sound("bounce"),
-                    SoundId::BounceCharge => play_sound("bouncecharge"),
+                    SoundId::BounceCharge => play_sound("bounce_charge"),
                     SoundId::Impulse => play_sound("impulse"),
                     SoundId::ImpulseExhaust => play_sound("impulse_exhaust"),
                     SoundId::Break1 => play_sound("break1"),
