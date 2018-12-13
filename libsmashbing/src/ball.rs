@@ -68,7 +68,7 @@ impl Ball {
     /// any necessary sounds.
     pub fn update(&mut self, dt: f32) -> Vec<::Effect> {
         let mut effects = Vec::new();
-        /// Move to the next position (p' = p + v*dt)
+        // Move to the next position (p' = p + v*dt)
         self.pos += self.vel.scaled(dt);
         // Don't fall if "resting" on the ground.
         if self.pos.y > MIN_Y + NORMAL_THRESHOLD {
