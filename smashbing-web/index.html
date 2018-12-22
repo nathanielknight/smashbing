@@ -1,33 +1,85 @@
 <html>
-
-<head>
+  <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
-</head>
+    <title>Ballistic Smashbing!</title>
+    <style>
+      #container {
+        margin: auto;
+        max-width: 512px;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
+    <div id="container"><canvas width="64" height="64" id="game"></canvas></div>
+    <script src="smashbing_web.js"></script>
+    <script src="audioplayer.js"></script>
     <script>
-        // The `--no-modules`-generated JS from `wasm-bindgen` attempts to use
-        // `WebAssembly.instantiateStreaming` to instantiate the wasm module,
-        // but this doesn't work with `file://` urls. This example is frequently
-        // viewed by simply opening `index.html` in a browser (with a `file://`
-        // url), so it would fail if we were to call this function!
-        //
-        // Work around this for now by deleting the function to ensure that the
-        // `no_modules.js` script doesn't have access to it. You won't need this
-        // hack when deploying over HTTP.
-        delete WebAssembly.instantiateStreaming;
+      delete WebAssembly.instantiateStreaming;
+      const CANVAS_OPTS = {
+        antialias: false
+      };
+
+      // TODO: Maximize the canvas in width or height, as appropriate.
+      const CANVAS_SIZE = 64.0;
+      const CANVAS_STYLE_SIZE = 512.0;
+      const CANVAS_SCALE = CANVAS_SIZE / CANVAS_STYLE_SIZE;
+
+      let gameCanvas = document.getElementById("game");
+      gameCanvas.setAttribute(
+        "style",
+        `width: ${CANVAS_STYLE_SIZE}px; height: ${CANVAS_STYLE_SIZE}px;`
+      );
+      let ctx = gameCanvas.getContext("2d", CANVAS_OPTS);
+      var game;
+
+      gameCanvas.onclick = function(evt) {
+        let x = (evt.clientX - gameCanvas.offsetLeft) * CANVAS_SCALE;
+        let y = (evt.clientY - gameCanvas.offsetTop) * CANVAS_SCALE;
+        console.log("onclick @ %f %f", x, y);
+        game.fire_at(x, y);
+      };
+
+      function draw_rect(x, y, w, h, c) {
+        ctx.fillStyle = c;
+        ctx.fillRect(x, y, w, h);
+      }
+
+      function exit() {
+        // TODO: Can't close window from JS; Figure out what to do
+        // about this.
+        // window.close();
+      }
+
+      let player = new AudioPlayer();
+      player.addAudio("bounce", "./sounds/bounce.wav");
+      player.addAudio("bounce_charge", "./sounds/bounce-charge.wav");
+      player.addAudio("impulse", "./sounds/impulse.wav");
+      player.addAudio("impulse_exhaust", "./sounds/impulse-exhaust.wav");
+      player.addAudio("break1", "./sounds/break1.wav");
+      player.addAudio("break2", "./sounds/break2.wav");
+      player.addAudio("break3", "./sounds/break3.wav");
+      player.addAudio("break4", "./sounds/break4.wav");
+      player.addAudio("win", "./sounds/win.wav");
+
+      function play_sound(soundKey) {
+        player.playSound(soundKey);
+      }
+
+      const { EmbeddedGame } = wasm_bindgen;
+
+      const DELTA_TIME = 1.0 / 60.0;
+
+      function run() {
+        game = new EmbeddedGame();
+        setInterval(function() {
+          game.update(DELTA_TIME);
+        }, DELTA_TIME * 1000);
+      }
+
+      wasm_bindgen("./smashbing_web_bg.wasm")
+        .then(run)
+        .catch(console.error);
     </script>
-    <script src="./smashbing_web.js"></script>
-    <script>
-        const { greet } = wasm_bindgen;
-
-        function run() {
-            greet("World");
-        }
-
-        wasm_bindgen("./smashbing_web_bg.wasm")
-            .then(run).catch(console.error);
-    </script>
-</body>
-
+  </body>
 </html>

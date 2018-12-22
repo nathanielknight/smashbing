@@ -1,2 +1,8 @@
 target/
 .vscode/
+
+*.exe
+*.dll
+
+# Just until I'm ready to release
+**/Cargo.lock

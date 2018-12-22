@@ -1,6 +1,0 @@
-[workspace]
-members = [
-    "libsmashbing",
-    "smashbing-native",
-    "smashbing-web",
-]
