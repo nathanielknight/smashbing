@@ -87,7 +87,7 @@ fn clamp(x: f32, floor: f32, ceil: f32) -> f32 {
 }
 
 /// Get a slightly randomized color based on the block location.
-fn block_color(i: &usize, j: &usize) -> draw::Color {
+fn block_color(i: usize, j: usize) -> draw::Color {
     let dist = rand::distributions::Uniform::new(-0.3, 0.3);
     let mut rng = thread_rng();
     let jitter: f32 = rng.sample(dist);
@@ -156,7 +156,7 @@ pub fn new_blockset() -> collections::HashSet<Block> {
             let c = if critter {
                 random_grey()
             } else {
-                block_color(&i, &j)
+                block_color(i, j)
             };
             let x = BLOCKS_START_X + (i as f32) * BLOCK_WIDTH;
             let y = BLOCKS_START_Y + (j as f32) * BLOCK_HEIGHT;
