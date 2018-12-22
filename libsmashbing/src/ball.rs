@@ -1,9 +1,9 @@
+use std::f32::consts::PI;
+
 extern crate rand;
 use rand::{thread_rng, Rng};
 
 use vec::Vec2;
-
-const PI: f32 = 3.1415927535;
 
 const MIN_X: f32 = 3.0;
 const MAX_X: f32 = 60.999;
@@ -53,11 +53,12 @@ impl Ball {
         Ball {
             pos: Vec2::new(x, y),
             vel: Vec2::new(dx, dy),
-            dist: dist,
+            dist,
             charges: 2,
         }
     }
 
+    #[allow(clippy::useless_let_if_seq)]
     pub fn update(&mut self, dt: f32) -> Vec<::Effect> {
         let mut effects = Vec::new();
         self.pos += self.vel.scaled(dt);

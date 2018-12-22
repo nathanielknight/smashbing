@@ -10,11 +10,11 @@ pub struct Vec2 {
 
 impl Vec2 {
     pub fn new(x: f32, y: f32) -> Vec2 {
-        Vec2 { x: x, y: y }
+        Vec2 { x, y }
     }
 
     /// Get the vector's length.
-    pub fn magnitude(&self) -> f32 {
+    pub fn magnitude(self) -> f32 {
         (self.x * self.x + self.y * self.y).sqrt()
     }
 
@@ -33,8 +33,8 @@ impl Vec2 {
     }
 
     /// A new copy of the vector, scaled by the given scalar.
-    pub fn scaled(&self, scalar: f32) -> Vec2 {
-        let mut newvec = self.clone();
+    pub fn scaled(self, scalar: f32) -> Vec2 {
+        let mut newvec = self;
         newvec.scale(scalar);
         newvec
     }
@@ -49,7 +49,8 @@ fn test_vec_magnitude() {
 
 #[test]
 fn test_vec_rotate() {
-    const PI: f32 = 3.1415926535;
+    use std::f32::consts::PI;
+
     let mut v = Vec2::new(1.0, 0.0);
     v.rotate(PI / 2.0);
     assert!((v - Vec2::new(0.0, 1.0)).magnitude() < 1e-7);
@@ -134,7 +135,7 @@ impl Vec2 {
         self.y /= m;
     }
 
-    pub fn normalised(&self) -> Vec2 {
+    pub fn normalised(self) -> Vec2 {
         let m = self.magnitude();
         Vec2::new(self.x / m, self.y / m)
     }

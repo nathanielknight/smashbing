@@ -56,7 +56,7 @@ impl Game {
         // Handle User Input
         for cmd in commands {
             match cmd {
-                &Command::None => (),
+                Command::None => (),
                 &Command::Fire(x, y) => {
                     let fire_effects = self.ball.fire_at(x, y);
                     effects.extend(fire_effects);
@@ -67,7 +67,7 @@ impl Game {
         let mut colliding = false;
         let mut reset = false;
         for block in &self.blocks {
-            if block.rect.contains(&self.ball.pos) {
+            if block.rect.contains(self.ball.pos) {
                 colliding = true;
                 match block.effect {
                     block::BlockEffect::None => (),
@@ -85,7 +85,7 @@ impl Game {
             let collision_effects = self.ball.block_collide();
             effects.extend(collision_effects);
             let ball_pos = self.ball.pos;
-            self.blocks.retain(|b| !b.rect.contains(&ball_pos));
+            self.blocks.retain(|b| !b.rect.contains(ball_pos));
         }
 
         // Dynamics
