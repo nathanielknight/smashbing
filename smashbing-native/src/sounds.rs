@@ -38,7 +38,7 @@ impl SoundRepo {
     }
 
     pub fn play(&self, id: &SoundId) -> ggez::GameResult<()> {
-        let outcome = match id {
+        match id {
             SoundId::Bounce => self.bounce.play(),
             SoundId::BounceCharge => self.bounce_charge.play(),
             SoundId::Impulse => self.impulse.play(),
@@ -48,7 +48,6 @@ impl SoundRepo {
             SoundId::Break3 => self.break3.play(),
             SoundId::Break4 => self.break4.play(),
             SoundId::Win => self.win.play(),
-        };
-        outcome
+        }
     }
 }
