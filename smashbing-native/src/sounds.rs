@@ -1,7 +1,10 @@
+/// Implement the loading and playing of sounds necessary for Smashbing.
 use ggez;
 use ggez::audio::{SoundData, Source};
 use libsmashbing::SoundId;
 
+/// This struct holds `ggez::audio::Source`s for all of the sounds that the
+/// game might need to play.
 pub struct SoundRepo {
     bounce: Source,
     bounce_charge: Source,
@@ -16,9 +19,13 @@ pub struct SoundRepo {
 
 impl SoundRepo {
     pub fn new(ctx: &mut ggez::Context) -> ggez::GameResult<SoundRepo> {
+        // Use a macro to de-duplicate some repetitive code.
         macro_rules! load_sound_file {
             ($fname:tt) => {{
+                // The data for each sound file is included in the game binary
+                // with `include_bytes`.
                 const BYTES: &'static [u8] = include_bytes!($fname);
+                // See `ggez`'s docs for more on the sound API.
                 let sound_data = SoundData::from_bytes(BYTES);
                 Source::from_data(ctx, sound_data)?
             }};
@@ -37,6 +44,7 @@ impl SoundRepo {
         })
     }
 
+    /// Play the sound indicated by the given `SoundId`.
     pub fn play(&self, id: &SoundId) -> ggez::GameResult<()> {
         match id {
             SoundId::Bounce => self.bounce.play(),

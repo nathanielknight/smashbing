@@ -1,3 +1,5 @@
+/// A program that implements Smashbing for desktops using `libsmashbing`
+/// and `ggez`.
 extern crate ggez;
 extern crate libsmashbing;
 
@@ -13,6 +15,7 @@ use libsmashbing::{Effect, Game, SoundId};
 
 mod sounds;
 
+/// Initialize the graphics system.
 fn setup_graphics(ctx: &mut Context) -> GameResult<()> {
     graphics::set_resolution(ctx, 64, 64)?;
     graphics::set_screen_coordinates(ctx, graphics::Rect::new(0.0, 0.0, 64.0, 64.0))?;
@@ -20,16 +23,23 @@ fn setup_graphics(ctx: &mut Context) -> GameResult<()> {
     Ok(())
 }
 
+/// Convert colors from `libsmashbing`'s representation to `ggez`'s.
 fn convert_color(inp: &draw::Color) -> graphics::Color {
     let (r, g, b, a) = *inp;
     graphics::Color::new(r, g, b, a)
 }
 
+/// This struct holds the data required to convert from screen coordinates
+/// to game coordinates. It also does the conversion from "up is negative"
+/// (the convention in `ggez`'s graphics functions) to "up is positive"
+/// (which is what I use in `libsmashbing`).
 struct CoordConverter {
     screen_size: (f32, f32),
 }
 
 impl CoordConverter {
+    /// Convert coordinates from `ggez`'s position values to the ones
+    /// expected by `libsmashbing`.
     fn convert_from_pixels(&self, px: f32, py: f32) -> (f32, f32) {
         const DOMAIN_SIZE: f32 = 64.0;
         let (sx, sy) = self.screen_size;
@@ -47,13 +57,7 @@ impl CoordConverter {
     }
 }
 
-struct NativeGame {
-    game: Game,
-    fire: bool,
-    coords: CoordConverter,
-    sound_repo: sounds::SoundRepo,
-}
-
+/// Convert a Rect from `libsmashbing`'s representation to `ggez`'s.
 fn convert_rect(inp: &libsmashbing::rect::Rect) -> graphics::Rect {
     graphics::Rect::new(
         inp.left,
@@ -63,8 +67,40 @@ fn convert_rect(inp: &libsmashbing::rect::Rect) -> graphics::Rect {
     )
 }
 
+/// This struct holds the `libsmashbing::Game` model and implements the `ggez`
+/// callbacks required to run the game.
+struct NativeGame {
+    game: Game,
+    /// Set by the input code when the game should fire the ball.
+    fire: bool,
+    coords: CoordConverter,
+    sound_repo: sounds::SoundRepo,
+}
+
+impl NativeGame {
+    /// Perform the requested effects.
+    fn do_effects(&mut self, ctx: &mut ggez::Context, effects: &[Effect]) -> GameResult<()> {
+        for effect in effects {
+            match effect {
+                Effect::Sound(sound_id) => self.play_sound(sound_id)?,
+                Effect::Exit => ctx.quit()?,
+            }
+        }
+        Ok(())
+    }
+
+    /// Play a sound from this game's `SoundRepo`.
+    fn play_sound(&mut self, sound_id: &SoundId) -> GameResult<()> {
+        self.sound_repo.play(sound_id)?;
+        Ok(())
+    }
+}
+
+/// Callbacks for the game. See `ggez`'s documentation for more information.
 impl event::EventHandler for NativeGame {
+    /// Advance the simulation and perform effects.
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        // Allocate a vector of commands to pass to `libsmashbing`.
         let cmds = if self.fire {
             self.fire = false; // Reset listener.
             let pos = mouse::get_position(ctx).expect("Error getting mouse position");
@@ -75,15 +111,20 @@ impl event::EventHandler for NativeGame {
         };
         let delta = timer::get_delta(ctx);
         let dt = timer::duration_to_f64(delta);
+        // Advance the game state and retrieve effects to be performed (e.g.
+        // quit the game, play a sound).
         let effects = self.game.update(dt as f32, &cmds);
+        // Perform the requested effects.
         self.do_effects(ctx, &effects)?;
         Ok(())
     }
 
+    /// Draw the current game-state. See `ggez`'s documentation for more info
+    /// on the drawing methods.
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx);
 
-        // Court
+        // Background
         graphics::set_color(ctx, graphics::Color::new(0.1, 0.1, 0.1, 1.0))?;
         let court_rect = graphics::Rect::new(3.0, 3.0, 58.0, 56.0);
         graphics::rectangle(ctx, graphics::DrawMode::Fill, court_rect)?;
@@ -119,6 +160,7 @@ impl event::EventHandler for NativeGame {
         Ok(())
     }
 
+    // Listen for input.
     fn mouse_button_down_event(&mut self, _: &mut Context, _: event::MouseButton, _: i32, _: i32) {
         if !self.fire {
             self.fire = true;
@@ -126,6 +168,8 @@ impl event::EventHandler for NativeGame {
     }
 }
 
+/// Entrypoint for this program. See `ggez`'s documentation for more info on
+/// the setup code.`
 fn main() {
     let window_setup = conf::WindowSetup {
         title: "Ballistic Smashbing".to_string(),
@@ -160,21 +204,4 @@ fn main() {
         sound_repo: sounds,
     };
     event::run(ctx, &mut game).expect("Error running game");
-}
-
-impl NativeGame {
-    fn do_effects(&mut self, ctx: &mut ggez::Context, effects: &[Effect]) -> GameResult<()> {
-        for effect in effects {
-            match effect {
-                Effect::Sound(sound_id) => self.play_sound(sound_id)?,
-                Effect::Exit => ctx.quit()?,
-            }
-        }
-        Ok(())
-    }
-
-    fn play_sound(&mut self, sound_id: &SoundId) -> GameResult<()> {
-        self.sound_repo.play(sound_id)?;
-        Ok(())
-    }
 }
