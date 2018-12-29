@@ -1,13 +1,18 @@
 /// Points and directions in space.
 use std::ops;
 
-/// Point in 2D Space (modelled as a continuous field)
+/// Point in 2D Space. Coordinates are `f32`s, so all of the operations
+/// in this module are only as precise as `f32`s. The operations are
+/// tested to one part in 100 000, so as long as you don't need more
+/// accuracy than that, you probably don't need to think about it.
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct Vec2 {
     pub x: f32,
     pub y: f32,
 }
 
+/// A pair of `f32`s, interpreted as a point in 2D space. This might
+/// be a position, a velocity, etc. depending on the context.
 impl Vec2 {
     pub fn new(x: f32, y: f32) -> Vec2 {
         Vec2 { x, y }
@@ -18,7 +23,8 @@ impl Vec2 {
         (self.x * self.x + self.y * self.y).sqrt()
     }
 
-    /// Rotate by a number of radians.
+    /// Rotate by a number of radians. As per the mathematical convention,
+    /// positive numbers cause an anti-clockwise rotation).
     pub fn rotate(&mut self, rads: f32) {
         let newx = self.x * rads.cos() - self.y * rads.sin();
         let newy = self.x * rads.sin() + self.y * rads.cos();
@@ -26,7 +32,7 @@ impl Vec2 {
         self.y = newy;
     }
 
-    /// Scale the vector's length.
+    /// Scale the vector's length. It's direction is unaffected.
     pub fn scale(&mut self, scalar: f32) {
         self.x *= scalar;
         self.y *= scalar;
@@ -129,12 +135,15 @@ fn test_vec_scale() {
 }
 
 impl Vec2 {
+    /// Scale this vector so that it's length is 1.0.
     pub fn normalise(&mut self) {
         let m = self.magnitude();
         self.x /= m;
         self.y /= m;
     }
 
+    /// Create a new vector with this vector's orientation but a length
+    /// of 1.0.
     pub fn normalised(self) -> Vec2 {
         let m = self.magnitude();
         Vec2::new(self.x / m, self.y / m)

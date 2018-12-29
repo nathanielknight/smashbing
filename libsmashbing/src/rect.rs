@@ -1,4 +1,5 @@
-/// Rectangular areas in space.
+/// Rectangular areas, for implementing graphics and collisions.
+
 use vec::Vec2;
 
 #[derive(PartialEq, Debug)]
@@ -19,12 +20,15 @@ impl Rect {
         }
     }
 
+    /// Check if this `Rect` contains a point (as a `Vec2`).
     pub fn contains(&self, point: Vec2) -> bool {
         let in_x = self.left <= point.x && point.x <= self.right;
         let in_y = self.bottom <= point.y && point.y <= self.top;
         in_x && in_y
     }
 
+    /// Move this rect `dx` units horizontally and `dy` units vertically.
+    /// As per the usual convention, left and down are negative.
     pub fn translate(&mut self, dx: f32, dy: f32) {
         self.left += dx;
         self.right += dx;
@@ -32,6 +36,8 @@ impl Rect {
         self.top += dy;
     }
 
+    /// Create a new rect offset from this one by `dx` units horizontally
+    /// and `dy` units vertically.
     pub fn translated(&self, dx: f32, dy: f32) -> Rect {
         Rect::new(
             self.left + dx,
@@ -40,6 +46,9 @@ impl Rect {
             self.top + dy,
         )
     }
+
+    /// Find the centre of this `Rect` (approximate, insofar as math on 
+    /// `f32`s is approximate).
     pub fn center(&self) -> Vec2 {
         Vec2::new(
             (self.right + self.left) / 2.0,
