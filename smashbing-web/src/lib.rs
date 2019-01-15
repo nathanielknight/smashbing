@@ -1,8 +1,15 @@
+/// This module contains the interface between `libsmashbing` and the browser.
+///
+/// It imports `libshasmbing` sets up and controls the game, imports some
+/// functions from JavaScript, and exports an API that can be kicked off when
+/// the webpage loads.
 extern crate libsmashbing;
 extern crate wasm_bindgen;
 
 use wasm_bindgen::prelude::*;
 
+// These functions are imported from JavaScript, and are implemented in a
+// `<script>` tag in `index.js`.
 #[wasm_bindgen]
 extern "C" {
     fn draw_rect(x: f32, y: f32, w: f32, h: f32, c: String);
@@ -10,6 +17,8 @@ extern "C" {
     fn exit();
 }
 
+// This struct and its methods are exported to JavaScript, where they're called
+// to start and control the game.
 #[wasm_bindgen]
 pub struct EmbeddedGame {
     game: libsmashbing::Game,
@@ -28,14 +37,20 @@ impl Default for EmbeddedGame {
 
 #[wasm_bindgen]
 impl EmbeddedGame {
+    /// This is the function that's called when we do `new EmbeddedGame()` in
+    /// JavaScript.
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         EmbeddedGame::default()
     }
 
+    /// The game loop is implemented in JavaScript; this function is called
+    /// once per game loop.
     #[wasm_bindgen]
     pub fn update(&mut self, dt: f32) {
+        // Pass commands through to the game.
         let effects = self.game.update(dt, &self.commands);
+        // Handle effects sent from the game engine.
         for effect in &effects {
             use libsmashbing::{Effect, SoundId};
             match effect {
@@ -58,6 +73,7 @@ impl EmbeddedGame {
         self.commands.clear();
     }
 
+    /// This function uses functions imported from JavaScript to draw the game.
     #[wasm_bindgen]
     pub fn render(&self) {
         // Background
@@ -97,6 +113,8 @@ impl EmbeddedGame {
         }
     }
 
+    /// This function (which gets called in an `onClick` handler in JavaScript)
+    /// translates user input into a command the game can handle.
     #[wasm_bindgen]
     pub fn fire_at(&mut self, x: f32, y: f32) {
         let cmd = libsmashbing::Command::Fire(x, 64.0 - y);
@@ -104,6 +122,8 @@ impl EmbeddedGame {
     }
 }
 
+/// This struct converts from colors as they're represented in `libsmashbing`
+/// to a format that's useful for the browser.
 #[derive(Default)]
 pub struct Color {
     r: u8,
@@ -113,6 +133,7 @@ pub struct Color {
 }
 
 impl Color {
+    /// Createa a `Color` from a `libsmashbing` color.
     fn from_game_color(game_color: &libsmashbing::draw::Color) -> Self {
         let (r, g, b, a) = game_color;
         Color {
@@ -123,11 +144,14 @@ impl Color {
         }
     }
 
+    /// Convert to a string suitable for use with `draw_rect`.
     fn as_style(&self) -> String {
         format!("rgba({}, {}, {}, {})", self.r, self.g, self.b, self.a)
     }
 }
 
+/// Make sure color representations are between 0 and 1, and convert them to
+/// the range that the browser uses (0-255).
 fn float_to_html_color(x: f32) -> u8 {
     assert!(0.0 <= x && x <= 1.0, "Color out of bounds: {:?}", x);
     (x * 255.0) as u8
