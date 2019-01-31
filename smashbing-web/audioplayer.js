@@ -1,3 +1,11 @@
+// This class uses the WebAudio API to implement game-appropriate sound
+// effects. In theory, this could be implemented by creating a bunch of `Audio`
+// elements and calling `play` on them at the appropriate times, but in
+// practice, sound effects played with that setup don't line up with the game
+// events that they're supposed to line up with.
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+
 class AudioPlayer {
   constructor() {
     // BufferLoader to load sounds?
