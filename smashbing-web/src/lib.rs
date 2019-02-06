@@ -75,6 +75,7 @@ impl EmbeddedGame {
 
     /// This function uses functions imported from JavaScript to draw the game.
     #[wasm_bindgen]
+    #[allow(clippy::many_single_char_names)]
     pub fn render(&self) {
         // Background
         draw_rect(0.0, 0.0, 64.0, 64.0, "black".to_owned());
@@ -100,11 +101,11 @@ impl EmbeddedGame {
             );
         }
         // "Critters"
-        const CRITTER_COLOR: &'static str = "blue";
+        const CRITTER_COLOR: &str = "blue";
         draw_rect(6.0, 59.0, 3.0, 3.0, CRITTER_COLOR.to_owned());
         for idx in 0..self.game.freed_critters() {
             draw_rect(
-                10.0 + (idx as f32) * 3.0,
+                10.0 + f32::from(idx) * 3.0,
                 60.0,
                 2.0,
                 2.0,

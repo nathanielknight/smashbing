@@ -1,9 +1,9 @@
+use std::f32::consts::PI;
+
 extern crate rand;
 use rand::{thread_rng, Rng};
 
 use vec::Vec2;
-
-const PI: f32 = 3.1415927535;
 
 // The ball is constrained to within a few pixels of the edge. This assumes a
 // 64 x 64 pixel play area.
@@ -21,7 +21,7 @@ const BOUNCE_FACTOR: f32 = 0.55;
 /// are.)
 const FIRE_IMPULSE: f32 = 70.0;
 /// Velocity is scaled by this much when colliding with a block
-const BLOCK_DAMPING: f32 = 0.7;
+const BLOCK_DAMPING: f32 = 0.4;
 
 /// Amount the ball's y velocity decreases each second.
 const GRAVITATIONAL_ACCELERATION: f32 = -45.0;
@@ -59,11 +59,12 @@ impl Ball {
         Ball {
             pos: Vec2::new(x, y),
             vel: Vec2::new(dx, dy),
-            dist: dist,
+            dist,
             charges: 2,
         }
     }
 
+    #[allow(clippy::useless_let_if_seq)]
     /// Advance the ball's simulation by `dt` seconds, yielding `Effect`s for
     /// any necessary sounds.
     pub fn update(&mut self, dt: f32) -> Vec<::Effect> {

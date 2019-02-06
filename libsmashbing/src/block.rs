@@ -42,11 +42,11 @@ impl Block {
     ) -> Block {
         let r = rect::Rect::new(x, x + BLOCK_WIDTH, y, y + BLOCK_HEIGHT);
         Block {
-            id: id,
+            id,
             rect: r,
             color: c,
             is_critter: critter,
-            effect: effect,
+            effect,
         }
     }
 }
@@ -87,7 +87,7 @@ fn clamp(x: f32, floor: f32, ceil: f32) -> f32 {
 }
 
 /// Get a slightly randomized color based on the block location.
-fn block_color(i: &usize, j: &usize) -> draw::Color {
+fn block_color(i: usize, j: usize) -> draw::Color {
     let dist = rand::distributions::Uniform::new(-0.3, 0.3);
     let mut rng = thread_rng();
     let jitter: f32 = rng.sample(dist);
@@ -96,10 +96,10 @@ fn block_color(i: &usize, j: &usize) -> draw::Color {
 
     // This is a linear interpolation between two greens. When `scale` is -0.3,
     // we'd get the dark green. When `scale` is 0.3, we get the light green.
-    let r = clamp(0.392 + (0.049 - 0.392) * scale, 0.0, 1.0);
-    let g = clamp(0.875 + (0.456 - 0.875) * scale, 0.0, 1.0);
-    let b = clamp(0.129 + (0.133 - 0.129) * scale, 0.0, 1.0);
-    (r, g, b, 1.0)
+    let red = clamp(0.392 + (0.049 - 0.392) * scale, 0.0, 1.0);
+    let green = clamp(0.875 + (0.456 - 0.875) * scale, 0.0, 1.0);
+    let blue = clamp(0.129 + (0.133 - 0.129) * scale, 0.0, 1.0);
+    (red, green, blue, 1.0)
 }
 
 // For critter blocks, a random grey color.
@@ -107,15 +107,15 @@ fn random_grey() -> draw::Color {
     let dist = rand::distributions::Uniform::new(-0.2, 0.2);
     let rng = &mut rand::thread_rng();
     let jitter: f32 = rng.sample(dist);
-    let r = 0.3 + jitter;
-    let g = 0.3 + jitter;
-    let b = 0.3 + jitter;
-    (r, g, b, 1.0)
+    let red = 0.3 + jitter;
+    let green = 0.3 + jitter;
+    let blue = 0.3 + jitter;
+    (red, green, blue, 1.0)
 }
 
 // Generate random, non-repeating locations for the critters in terms of block
 // indices.
-fn random_critter_locations<'a>() -> [(u8, u8); CRITTER_BLOCKS] {
+fn random_critter_locations() -> [(u8, u8); CRITTER_BLOCKS] {
     let mut locs = [(0, 0); CRITTER_BLOCKS];
     let rng = &mut thread_rng();
     let mut points = Vec::new();
@@ -126,11 +126,12 @@ fn random_critter_locations<'a>() -> [(u8, u8); CRITTER_BLOCKS] {
             points.push((i, j));
         }
     }
-    let mut idx = 0;
-    // Get unique block locations using `rand::seq::sample_iter`.
-    for (i, j) in rand::seq::sample_iter(rng, points, CRITTER_BLOCKS).unwrap() {
-        locs[idx] = (i as u8, j as u8);
-        idx += 1;
+    for (idx, (i, j)) in rand::seq::sample_iter(rng, points, CRITTER_BLOCKS)
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        locs[idx] = (*i as u8, *j as u8);
     }
     locs
 }
@@ -155,7 +156,7 @@ pub fn new_blockset() -> collections::HashSet<Block> {
             let c = if critter {
                 random_grey()
             } else {
-                block_color(&i, &j)
+                block_color(i, j)
             };
             let x = BLOCKS_START_X + (i as f32) * BLOCK_WIDTH;
             let y = BLOCKS_START_Y + (j as f32) * BLOCK_HEIGHT;
